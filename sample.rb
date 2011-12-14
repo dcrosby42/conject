@@ -7,8 +7,7 @@ end
 class Kennel
 end
 
-module Ruice
-  class Context
+  class ObjectContext
     def initialize
       @object_producers = {}
     end
@@ -18,7 +17,6 @@ module Ruice
         producer.produce 
       end
     end
-
 
     def set_object_producer(object_name, object_producer)
       @object_producers[object_name.to_sym] = object_producer
@@ -83,9 +81,8 @@ module Ruice
       @class.new
     end
   end
-end
 
-context = Ruice::Context.new
+context = ObjectContext.new
 
 # context.set_simple_class(:dog, Dog)
 

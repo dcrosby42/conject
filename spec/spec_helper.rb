@@ -1,4 +1,6 @@
-$LOAD_PATH << File.join(File.dirname(__FILE__), '../lib')
+PROJECT_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
+
+$LOAD_PATH << "#{PROJECT_ROOT}/lib"
 ENV["APP_ENV"] = "rspec"
 
 #require 'environment'
@@ -10,7 +12,7 @@ ENV["APP_ENV"] = "rspec"
 
 
 # Load all support files
-Dir["#{APP_ROOT}/spec/support/*.rb"].each do |support|
+Dir["#{PROJECT_ROOT}/spec/support/*.rb"].each do |support|
   require support
 end
 

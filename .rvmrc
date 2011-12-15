@@ -1,2 +1,2 @@
 rvm_gemset_create_on_use_flag=1
-rvm 1.9.3@ruice
+rvm 1.9.3@object_context

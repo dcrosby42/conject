@@ -2,12 +2,13 @@ $: << "."
 require 'metaid'
 
 class ObjectDefinition
-  attr_reader :component_names
+  attr_reader :component_names, :owner, :construction_type, :singleton
 
   def initialize(opts={})
     @owner = opts[:owner]
     @component_names = opts[:component_names] || []
     @construction_type = :instance
+    @singleton = true
   end
 end
 
@@ -95,9 +96,8 @@ end
 class Car
   construct_with :doors
 
-  def initialize
-    puts "User defined initialize: Construcing a new Car"#, doors=#{doors}"
-    #puts "Constructing a new Car a=#{a} b=#{b}"#, doors=#{doors}"
+  def initialize(cm)
+    puts "User defined initialize: Construcing a new Car #{cm}"
   end
 
 end
@@ -109,10 +109,10 @@ class Doors
   end
 end
 
-c = Car.new(:component => :map)
+c = Car.new(:doors => "whatever")
 $stdout.flush
 d = Doors.new
-c2 = Car.new(:component => :map2)
+c2 = Car.new(:doors => "more whatever")
 p c
 p d
 p c2

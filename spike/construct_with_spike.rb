@@ -1,5 +1,6 @@
 $: << "."
 require 'metaid'
+require 'set'
 
 class ObjectDefinition
   attr_reader :component_names, :owner, :construction_type, :singleton
@@ -15,22 +16,42 @@ end
 
 class Class
 
-  def construct_with(*syms)
+  def depends_on(*syms)
     #puts "Class #{name} wishes to be constructed with #{syms.inspect}"
 
     klass = self
 
+    object_def = ObjectDefinition.new(:owner => klass, :component_names => syms)
     klass.meta_def :object_definition do
-      @_object_definition ||= ObjectDefinition.new(:owner => self, :component_names => syms)
+      object_def
     end
+
 
     klass.class_def_private :components do 
       @_components ||= {}
     end
 
+    syms.each do |object_name|
+      class_def_private object_name do
+        components[object_name]
+      end
+    end
+
     klass.class_def_private :set_components do |component_map|
-      components.merge! component_map
-      puts "set_components called on #{self.class.name} with #{component_map.inspect}.  Remember I need #{syms.inspect}"
+      required = object_def.component_names.to_set
+      provided = component_map.keys.to_set
+      if required != provided
+        msg = "Wrong components when building new #{object_def.owner}:"
+
+        missing = required - provided
+        msg << "Required objects not provided: #{missing.to_a.inspect}" unless missing.empty?
+
+        unexpected = provided - required
+        msg << "Unexpected objects: #{unexpected.to_a.inspect}" unless unexpected.empty?
+      end
+
+      components.clear.merge! component_map
+
     end
 
     # Tidbits of state that our dynamically-defined functions herein
@@ -94,10 +115,10 @@ class Class
 end
 
 class Car
-  construct_with :doors
+  depends_on :doors
 
   def initialize(cm)
-    puts "User defined initialize: Construcing a new Car #{cm}"
+    puts "User defined initialize: Construcing a new Car #{cm}. Can talk about doors=#{doors}"
   end
 
 end
@@ -121,5 +142,5 @@ puts "Doors has an object def? #{Doors.has_object_definition?}"
 puts "Car has an object def? #{Car.has_object_definition?}"
 p Car.object_definition
 puts "Car class requires components: #{Car.object_definition.component_names}"
-puts "OK! (If this line prints out then the basic premise is working, though we're not really doing anything to assign components yet"
+puts "OK! (If this line prints out then the basic premise is working, though we're not really doing anything to assign components yet)"
 

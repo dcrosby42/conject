@@ -3,7 +3,7 @@ PROJECT_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 $LOAD_PATH << "#{PROJECT_ROOT}/lib"
 ENV["APP_ENV"] = "rspec"
 
-#require 'environment'
+require 'object_context'
 
 # require 'mocha'
 # RSpec.configure do |config|

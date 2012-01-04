@@ -54,7 +54,6 @@ class Class
     klass.class_def_private :set_components do |component_map|
       required = object_def.component_names.to_set
       provided = component_map.keys.to_set
-      puts "(set_components: required != provided ? #{required != provided})"
       if required != provided
         raise CompositionError.new(
           :object_definition => object_def,

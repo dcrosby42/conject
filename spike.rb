@@ -1,6 +1,17 @@
 $: << "."
 require 'metaid'
 
+class ObjectDefinition
+  attr_reader :component_names
+
+  def initialize(opts={})
+    @owner = opts[:owner]
+    @component_names = opts[:component_names] || []
+    @construction_type = :instance
+  end
+end
+
+
 class Class
 
   def construct_with(*syms)
@@ -8,10 +19,9 @@ class Class
 
     klass = self
 
-    # TBD: generate dep info object and set it into the metaclass, based on the list
-    # of given component names:
-    # ObjectContext::Definition.build_dependency_info(:component_names => syms)
-    # klass.meta_def :
+    klass.meta_def :object_definition do
+      @_object_definition ||= ObjectDefinition.new(:owner => self, :component_names => syms)
+    end
 
     klass.class_def_private :components do 
       @_components ||= {}
@@ -22,8 +32,10 @@ class Class
       puts "set_components called on #{self.class.name} with #{component_map.inspect}.  Remember I need #{syms.inspect}"
     end
 
+    # Tidbits of state that our dynamically-defined functions herein
+    # will close over.
     object_context_prep = {
-      :initialize_has_been_wrapped => false
+      :initialize_has_been_wrapped => false,  # keep track of when a class's :initialize method has been wrapped
     }
     # klass.meta_def :object_context_prep do
     #   @_object_context_prep ||= {
@@ -74,6 +86,10 @@ class Class
     end
   end
 
+  def has_object_definition?
+    respond_to?(:object_definition) and !object_definition.nil?
+  end
+
 end
 
 class Car
@@ -101,4 +117,9 @@ p c
 p d
 p c2
 #p c2.components # will fail, components should be private
+puts "Doors has an object def? #{Doors.has_object_definition?}"
+puts "Car has an object def? #{Car.has_object_definition?}"
+p Car.object_definition
+puts "Car class requires components: #{Car.object_definition.component_names}"
 puts "OK! (If this line prints out then the basic premise is working, though we're not really doing anything to assign components yet"
+

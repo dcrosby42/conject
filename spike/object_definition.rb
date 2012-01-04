@@ -12,6 +12,24 @@ class ObjectDefinition
   end
 end
 
+class CompositionError < RuntimeError
+  def initialize(opts={})
+    object_def = opts[:object_definition]
+    required = opts[:required]
+    provided = opts[:provided]
+
+    msg = "Wrong components when building new #{object_def.owner}: "
+
+    missing = required - provided
+    msg << "Missing required object(s) #{missing.to_a.inspect}. " unless missing.empty?
+
+    unexpected = provided - required
+    msg << "Encountered unexpected object(s) #{unexpected.to_a.inspect}. " unless unexpected.empty?
+
+    super msg
+  end
+end
+
 class Class
 
   def depends_on(*syms)
@@ -36,14 +54,12 @@ class Class
     klass.class_def_private :set_components do |component_map|
       required = object_def.component_names.to_set
       provided = component_map.keys.to_set
+      puts "(set_components: required != provided ? #{required != provided})"
       if required != provided
-        msg = "Wrong components when building new #{object_def.owner}:"
-
-        missing = required - provided
-        msg << "Required objects not provided: #{missing.to_a.inspect}" unless missing.empty?
-
-        unexpected = provided - required
-        msg << "Unexpected objects: #{unexpected.to_a.inspect}" unless unexpected.empty?
+        raise CompositionError.new(
+          :object_definition => object_def,
+          :required => required, 
+          :provided => provided)
       end
 
       components.clear.merge! component_map

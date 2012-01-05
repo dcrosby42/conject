@@ -1,0 +1,61 @@
+
+# Jan 2012
+
+# Requesting an object from a Context
+#   if object exists in current context
+#     return it
+#   else
+#     if a super context has the object
+#       use the object from the super context
+#     else
+#       create the object
+#       store in this Context as a singleton
+#       return the object
+#
+# Special case: an object being created within a subcontext requires a
+#               component that SHOULD be defined in the supercontext
+#               BUT has not yet been created.
+#
+#               Support a request-time option :from_super => [ :obj1, :obj2]
+#
+#
+# Special case: an object being created within a subcontext requires a
+#               component that SHOULD be defined in that SAME subcontext,
+#               but whose name overlaps with an object already defined in
+#               the SUPER context.
+#
+#               Suppoer a request-time option :define_own => [ :obj1, :obj2]
+#               (:hide_in_super ? name debatable)
+#
+#
+#               
+
+# Dec 2011
+
+# Term: REGULAR OBJECT
+# Instance of some class with 0 or more components
+
+#
+# Object definitions
+#   Manually add to context by name
+#   Indirectly added to context by meta programming in concerned class
+#   Generated defaults
+#
+# If no def exists 
+#   if require_on_demand is true
+#     require guessed library name
+#   if def still not exist
+#     generate default def
+#
+# Use def to construct object
+#   
+#   ? when a class uses meta programming to define aspects of itself
+#   we are not yet in a context for certain.
+#   We could assume global context but that isn't always right.
+#
+#   REAL QUESTION:
+#     How do we define non-global contexts conveniently?
+#     :w
+#
+
+

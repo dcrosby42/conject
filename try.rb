@@ -2,7 +2,7 @@ $: << "./lib"
 require 'object_context'
 
 class Donkey
-  depends_on :head, :legs
+  construct_with :head, :legs
 
   def journey
     head.talk
@@ -11,7 +11,7 @@ class Donkey
 end
 
 class Head
-  depends_on :eyes, :mouth
+  construct_with :eyes, :mouth
 
   def talk
     mouth.bray

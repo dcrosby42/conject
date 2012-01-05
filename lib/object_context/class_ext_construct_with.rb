@@ -4,7 +4,7 @@ require 'object_context/composition_error'
 
 class Class
 
-  def depends_on(*syms)
+  def construct_with(*syms)
     klass = self
 
     object_def = ObjectContext::ObjectDefinition.new(:owner => klass, :component_names => syms)
@@ -42,12 +42,7 @@ class Class
     object_context_prep = {
       :initialize_has_been_wrapped => false,  # keep track of when a class's :initialize method has been wrapped
     }
-    # klass.meta_def :object_context_prep do
-    #   @_object_context_prep ||= {
-    #     :initialize_has_been_wrapped => false
-    #   }
-    # end
-
+    
     # Alias :new such that we can wrap and invoke it later
     klass.meta_eval do 
       alias_method :actual_new, :new

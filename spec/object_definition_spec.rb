@@ -6,26 +6,26 @@ describe ObjectContext::ObjectDefinition do
   end
 
   it "has a field for :component_names and :owner and can be built with them" do
-    object_def = new_def :owner => "the owner", :component_names => [ :one, :two ]
-    object_def.owner.should == "the owner"
-    object_def.component_names.should == [:one, :two]
+    subject = new_def :owner => "the owner", :component_names => [ :one, :two ]
+    subject.owner.should == "the owner"
+    subject.component_names.should == [:one, :two]
   end
 
   it "defaults :component_names to an empty array" do
-    object_def = new_def :owner => "the owner"
-    object_def.owner.should == "the owner"
-    object_def.component_names.should be_empty
+    subject = new_def :owner => "the owner"
+    subject.owner.should == "the owner"
+    subject.component_names.should be_empty
   end
 
   it "defaults :owner to nil" do
-    object_def = new_def :component_names => [ :one, :two ]
-    object_def.owner.should nil
-    object_def.component_names.should == [:one, :two]
+    subject = new_def :component_names => [ :one, :two ]
+    subject.owner.should nil
+    subject.component_names.should == [:one, :two]
   end
 
   it "can be built with no args" do
-    object_def = new_def
-    object_def.owner.should nil
-    object_def.component_names.should be_empty
+    subject = new_def
+    subject.owner.should nil
+    subject.component_names.should be_empty
   end
 end

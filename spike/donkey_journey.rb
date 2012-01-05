@@ -8,6 +8,7 @@ class Donkey
     head.talk
     legs.walk
   end
+
 end
 
 class Head
@@ -46,3 +47,4 @@ donkey = Donkey.new(
 )
 
 donkey.journey
+

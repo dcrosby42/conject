@@ -1,6 +1,7 @@
 PROJECT_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 
 $LOAD_PATH << "#{PROJECT_ROOT}/lib"
+$LOAD_PATH << "#{PROJECT_ROOT}/spec/samples"
 ENV["APP_ENV"] = "rspec"
 
 require 'object_context'

@@ -24,9 +24,9 @@ class Class
     end
 
     klass.class_def_private :set_components do |component_map|
-      required = object_def.component_names.to_set
-      provided = component_map.keys.to_set
-      if required != provided
+      required = object_def.component_names
+      provided = component_map.keys
+      if required.to_set != provided.to_set
         raise ObjectContext::CompositionError.new(
           :object_definition => object_def,
           :required => required, 

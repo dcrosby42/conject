@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
 
-describe "Class extension construct_with" do
+describe "Class" do
 
   describe ".construct_with" do
     subject do
@@ -78,25 +78,96 @@ describe "Class extension construct_with" do
     end
 
     describe "when no object map is supplied to constructor" do
-      it "raises a composition error"
+      it "raises a typical argument error" do
+        lambda do subject.new end.should raise_error(ArgumentError)
+      end
     end
 
-    describe "when object map does not contain all required objects" do
-      it "raises a composition error explaining missing objects" 
+    describe "when object map does not contain any required objects" do
+      it "raises a composition error explaining missing objects" do
+        lambda do subject.new({}) end.should raise_error(
+          ObjectContext::CompositionError, 
+          /missing required.*object1.*object2/i
+        )
+      end
+    end
+
+    describe "when object map contains only SOME of the required objects" do
+      it "raises a composition error explaining which missing objects" do
+        lambda do subject.new(:object2 => "ok") end.should raise_error(
+          ObjectContext::CompositionError, 
+          /missing required.*object1/i
+        )
+      end
     end
 
     describe "when object map contains objects that are not accepted" do
-      it "raises a composition error explaining rejected objects" 
+      it "raises a composition error explaining rejected objects" do
+        lambda do 
+          subject.new(
+            :object1 => "ok",
+            :object2 => "ok",
+            :not_even_supposed => "to be here", 
+            :stop => "whining"
+          ) 
+        end.should raise_error(
+          ObjectContext::CompositionError, 
+          /unexpected object.*not_even_supposed.*stop/i
+        )
+      end
     end
 
     describe "when object map has a mix of missing and unexpected objects" do
-      it "raises a composition error explaining missing and rejected objects" 
+      it "raises a composition error explaining missing and rejected objects" do
+        lambda do 
+          subject.new(
+            :object1 => "ok",
+            :not_even_supposed => "to be here"
+          )
+        end.should raise_error(
+          ObjectContext::CompositionError, 
+          /missing required.*object2.*unexpected object.*not_even_supposed/i
+        )
+      end
     end
 
   end
 
-  describe ".object_definition"
+  describe ".object_definition" do
+    subject do 
+      Class.new do
+        construct_with :cats, :dogs
+      end
+    end
 
-  describe ".has_object_definition?"
+    it "exists on classes that use construct_with" do
+      subject.should respond_to(:object_definition)
+    end
+
+    it "references the owning class" do
+      subject.object_definition.owner.should == subject
+    end
+
+    it "contains the list of required object names for construction of new instances" do
+      subject.object_definition.component_names.to_set.should == [:cats,:dogs].to_set
+    end
+
+    describe "for classes that don't use construct_with" do
+      it "doesn't exist" do
+        require 'some_random_class'
+        SomeRandomClass.should_not respond_to(:object_definition)
+      end
+    end
+  end
+
+  describe ".has_object_definition?" do
+    it "returns false for all regular classes" do
+      Class.new.has_object_definition?.should be_false
+    end
+
+    it "returns true for classes that use construct_with" do
+      Class.new do construct_with :a end.has_object_definition?.should be_true
+    end
+  end
 
 end

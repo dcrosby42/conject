@@ -48,7 +48,18 @@ class Class
       alias_method :actual_new, :new
     end
 
-    # Override default :new behavior for this class:
+    # Override default :new behavior for this class.
+    #
+    # The .new method is rewritten to accept a single argument:
+    #   component_map: a Hash containing all required objects to construct a new instance.
+    #                  Keys are expected to be symbols.
+    # 
+    # If user defines their own #initialize method, all components sent into .new
+    # will be installed BEFORE the user-defined #initialize, and it may accept arguments thusly:
+    # * zero args.  Nothing will be passed to #initialize
+    # * single arg. The component_map will be passed.
+    # * var args (eg, def initialize(*args)).  args[0] will be the component map.  NO OTHER ARGS WILL BE PASSED. See Footnote a)
+    #
     klass.meta_def :new do |component_map|
 
       # We only want to do the following one time, but we've waited until now
@@ -68,11 +79,13 @@ class Class
           case arg_count
           when 0
             actual_initialize
-          when 1
+          when 1, -1  # See Footnote a) at the bottom of this file
+
             actual_initialize component_map
+
           else
             # We're not equipped to handle this
-            raise "User-defined initialize method defined with #{arg_count} paramters; must either be 0, or 1 to receive the component map."
+            raise "User-defined initialize method defined with #{arg_count} paramters; must either be 0, other wise 1 or -1 (varargs) to receive the component map."
           end
         end
         # Make a note that the initialize wrapper has been applied
@@ -90,3 +103,24 @@ class Class
 
 end
 
+
+# Footnote a) - Object#initialize arity funny business
+#
+# Before Ruby 1.9.3, Object#initialize has -1 arity by default and accepts 0 or
+# more args.  1.9.3 changes Object#initialize to default to 0 args.  This is
+# deliberate (and in my opinion a long-overdue correction) but a mild problem
+# -- I have no idea how I would determine in 1.9.2 or earlier if a user has
+# defined NO constructor at all.  However, passing component_map to an
+# otherwise undefined initialize method won't hurt, so let's just do it.
+#
+# If in 1.9.3 a user really HAS defined a varargs #initialize, then let's
+# expect that initialize method to conform to the same rules we're laying out
+# for other cases: If you accept args at all, the first one will be the
+# component_map.  In this case NO ADDITIONAL ARGS WILL BE PASSED.  (Who would send them in, anyway?)
+# The idea here is that people using construct_with are not intending to construct
+# new instances using some other input.
+#
+# Found this when struggling:
+#   http://bugs.ruby-lang.org/issues/5542 - Bug #5542: Ruby 1.9.3-p0 changed arity on default initialization method
+#
+# crosby 2012-01-07

@@ -62,6 +62,32 @@ describe "Class" do
       end
     end
 
+    describe "when user defines initialize with var args" do
+      subject do
+        Class.new do
+          construct_with :ant, :aardvark
+
+          attr_reader :map_string, :also
+
+          def initialize(*stuff)
+            map = stuff.shift
+            @map_string = map.inspect
+            @also = "Preset #{ant} and #{aardvark}"
+          end
+        end
+      end
+
+      let :map do { :ant => "red", :aardvark => "blue" } end
+
+      it "passes along the object map" do
+        subject.new(map).map_string.should == map.inspect
+      end
+
+      it "still pre-sets the object accessors" do
+        subject.new(map).also.should == "Preset red and blue"
+      end
+    end
+
     describe "when user doesn't define an initialize" do
       subject do
         Class.new do

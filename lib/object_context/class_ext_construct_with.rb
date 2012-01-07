@@ -85,7 +85,7 @@ class Class
 
           else
             # We're not equipped to handle this
-            raise "User-defined initialize method defined with #{arg_count} paramters; must either be 0, other wise 1 or -1 (varargs) to receive the component map."
+            raise "User-defined initialize method defined with #{arg_count} parameters; must either be 0, other wise 1 or -1 (varargs) to receive the component map."
           end
         end
         # Make a note that the initialize wrapper has been applied

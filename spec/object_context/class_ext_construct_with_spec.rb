@@ -88,6 +88,23 @@ describe "Class" do
       end
     end
 
+    describe "when user defines initialize with too many args" do
+      subject do
+        Class.new do
+          construct_with :beevis, :butthead
+          def initialize(one,two)
+            # won't ever get run because the .new override will freak due to our arity
+          end
+        end
+      end
+
+      let :map do { :beevis => "nh nh!", :butthead => "uhhh huh huh" } end
+
+      it "raises an error due to invalid #initialize signature" do
+        lambda do subject.new(map) end.should raise_error(RuntimeError, /initialize method defined with 2 parameters/) 
+      end
+    end
+
     describe "when user doesn't define an initialize" do
       subject do
         Class.new do

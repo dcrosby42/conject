@@ -2,7 +2,7 @@ require 'simplecov' # SimpleCov must come first!
 # This start/config code could alternatively go in .simplecov in project root:
 SimpleCov.start do
   add_filter "/spec/"
-  add_filter "/borrowed_active_support_inflector.rb"
+  add_filter "/borrowed_active_support_inflector.rb" # We stole it precious, our specs only hit about 47% of the functions, just to prove we have this library ready to go
 end
 
 PROJECT_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
@@ -13,6 +13,7 @@ ENV["APP_ENV"] = "rspec"
 
 require 'object_context'
 
+# Maybe later, maybe not.  Consider using rspec mocks or rr?
 # require 'mocha'
 # RSpec.configure do |config|
 #   config.mock_with :mocha

@@ -1,5 +1,9 @@
 require 'simplecov' # SimpleCov must come first!
-SimpleCov.start
+# This start/config code could alternatively go in .simplecov in project root:
+SimpleCov.start do
+  add_filter "/spec/"
+  add_filter "/borrowed_active_support_inflector.rb"
+end
 
 PROJECT_ROOT = File.expand_path(File.dirname(__FILE__) + "/..")
 

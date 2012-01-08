@@ -37,6 +37,7 @@ describe ObjectContext do
           object_factory.should_receive(:construct_new).with(:cheezburger, subject).and_return(@but_i_ated_it)
         end
 
+        # NOTE: these examples are identical to those in the spec for missing parent context (below)
         it "constructs the object anew using the object factory" do
           subject.get(:cheezburger).should == @but_i_ated_it
         end
@@ -56,6 +57,7 @@ describe ObjectContext do
           object_factory.should_receive(:construct_new).with(:cheezburger, subject).and_return(@but_i_ated_it)
         end
 
+        # NOTE: these examples are identical to those in the spec for parent context not having the object (above)
         it "constructs the object anew using the object factory" do
           subject.get(:cheezburger).should == @but_i_ated_it
         end
@@ -75,7 +77,7 @@ describe ObjectContext do
         it "returns true" do
           subject.put(:a_clue, "Wodsworth")
           subject.has?(:a_clue).should be_true
-          subject.has?(:a_clue).should be_true
+          subject.has?(:a_clue).should be_true # do it again for good measure
         end
       end
       describe "due to caching a previous #get" do
@@ -86,7 +88,7 @@ describe ObjectContext do
         it "returns true" do
           subject.get(:a_clue).should == "Mr Green"
           subject.has?(:a_clue).should be_true
-          subject.has?(:a_clue).should be_true
+          subject.has?(:a_clue).should be_true # do it again for good measure
         end
       end
     end
@@ -104,6 +106,35 @@ describe ObjectContext do
           parent_context.should_receive(:has?).with(:a_clue).and_return("the parent answer")
           subject.has?(:a_clue).should == "the parent answer"
         end
+      end
+    end
+  end
+
+  describe "#directly_has?" do
+    describe "when the object exists in the cache" do
+      describe "due to #put" do
+        it "returns true" do
+          subject.put(:a_clue, "Wodsworth")
+          subject.directly_has?(:a_clue).should be_true
+          subject.directly_has?(:a_clue).should be_true # twice for luck
+        end
+      end
+      describe "due to caching a previous #get" do
+        before do
+          parent_context.stub(:has?).and_return(false)
+          object_factory.stub(:construct_new).and_return("Mr Green")
+        end
+        it "returns true" do
+          subject.get(:a_clue).should == "Mr Green"
+          subject.directly_has?(:a_clue).should be_true
+          subject.directly_has?(:a_clue).should be_true
+        end
+      end
+    end
+
+    describe "when the object does NOT exist in the cache" do
+      it "returns false" do
+        subject.directly_has?(:a_clue).should == false
       end
     end
   end

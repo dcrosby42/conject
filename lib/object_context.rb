@@ -4,6 +4,9 @@ class ObjectContext; end
 # they must be required AFTER the initial definition of ObjectContext class.
 require 'object_context/object_definition'
 require 'object_context/class_ext_construct_with'
+require 'object_context/object_factory'
+require 'object_context/class_finder'
+require 'object_context/dependency_resolver'
 
 class ObjectContext
 
@@ -52,6 +55,18 @@ class ObjectContext
   # (Does not consult any parent contexts.)
   def directly_has?(name)
     @cache.keys.include?(name)
+  end
+
+  class << self
+    def default
+      @default ||= ObjectContext.new(
+        :parent_context => nil,
+        :object_factory => ObjectContext::ObjectFactory.new(
+          :class_finder => ObjectContext::ClassFinder.new,
+          :dependency_resolver => ObjectContext::DependencyResolver.new
+        )
+      )
+    end
   end
 end
 

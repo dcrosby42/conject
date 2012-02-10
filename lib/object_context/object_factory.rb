@@ -1,4 +1,5 @@
 require 'object_context'
+require 'object_context/utilities'
 
 class ObjectContext::ObjectFactory
   construct_with :class_finder, :dependency_resolver

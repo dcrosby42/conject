@@ -4,14 +4,6 @@ require 'some_random_class'
 
 describe ObjectContext::ClassFinder do
 
-  subject do
-    described_class.new
-  end
-
-  # let :component_map do
-  #   { :class_finder => class_finder, :dependency_resolver => dependency_resolver }
-  # end
-
   it "returns the class implied by the given name" do
     c = subject.find_class('some_random_class')
     c.should_not be_nil

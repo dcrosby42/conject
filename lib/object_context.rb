@@ -18,7 +18,7 @@ class ObjectContext
 
   # Inject a named object into this context
   def put(name, object)
-    @cache[name] = object
+    @cache[name.to_sym] = object
   end
 
   # Retrieve a named object from this context.
@@ -26,6 +26,7 @@ class ObjectContext
   #   If we have a parent context and it contains the requested object, get and return object from parent context. (Recursive upward search)
   #   If the object exists nowhere in this or a super context: construct, cache and return a new instance of the requested object using the object factory.
   def get(name)
+    name = name.to_sym
     object = @cache[name]
     return @cache[name] if @cache.keys.include?(name)
     

@@ -15,6 +15,18 @@ describe ObjectContext do
       it "returns the #put object" do
         subject.get(:kraft).should == "verk"
       end
+
+      it "can use strings and symbols interchangebly" do
+        subject.get('kraft').should == "verk"
+
+        subject.put('happy', 'hat')
+        subject.get('happy').should == 'hat'
+        subject.get(:happy).should == 'hat'
+      end
+
+      it "can use strings and symbols interchangebly" do
+        subject.get('kraft').should == "verk"
+      end
     end
 
     describe "when the object is not in the cache" do
@@ -138,7 +150,4 @@ describe ObjectContext do
       end
     end
   end
-
-  # TODO: demonstrate that strings are usable as object names but everything gets done 
-  #       in terms of symbol names (necessary?)
 end

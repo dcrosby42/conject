@@ -10,6 +10,12 @@ describe ObjectContext::ClassFinder do
     c.should == SomeRandomClass
   end
 
+  it "can accept symbols for object names" do
+    c = subject.find_class(:some_random_class)
+    c.should_not be_nil
+    c.should == SomeRandomClass
+  end
+
   it "raises an error if the name doesn't imply a regular class in the current runtime" do
     lambda do
       subject.find_class('something_undefined')

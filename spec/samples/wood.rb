@@ -1,0 +1,2 @@
+class Wood
+end

@@ -1,8 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
-require 'object_context/class_finder'
 require 'some_random_class'
 
-describe ObjectContext::ClassFinder do
+describe Conject::ClassFinder do
 
   it "returns the class implied by the given name" do
     c = subject.find_class('some_random_class')

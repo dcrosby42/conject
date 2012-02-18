@@ -1,5 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
-require 'object_context/borrowed_active_support_inflector'
 
 #
 # Some super-basic specs that don't really exercise Inflector,

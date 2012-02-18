@@ -1,6 +1,5 @@
-require 'object_context/borrowed_active_support_inflector'
 
-class ObjectContext::ClassFinder
+class Conject::ClassFinder
   def find_class(name)
     cname = name.to_s.camelize
     if Object.const_defined?(cname)

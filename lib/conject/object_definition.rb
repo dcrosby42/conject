@@ -1,6 +1,5 @@
-require 'object_context'
 
-class ObjectContext::ObjectDefinition
+class Conject::ObjectDefinition
   attr_reader :component_names, :owner 
 
   def initialize(opts={})

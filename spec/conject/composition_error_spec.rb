@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
 require 'some_random_class'
 
-describe ObjectContext::CompositionError do
+describe Conject::CompositionError do
   subject do 
     described_class.new construction_args
   end
@@ -15,7 +15,7 @@ describe ObjectContext::CompositionError do
   end
 
   let :object_definition do
-    ObjectContext::ObjectDefinition.new(
+    Conject::ObjectDefinition.new(
       :owner => SomeRandomClass,
       :component_names => []
     )
@@ -93,7 +93,7 @@ describe ObjectContext::CompositionError do
 
   describe "without an object_definition.owner" do
     let :object_definition do
-      ObjectContext::ObjectDefinition.new(
+      Conject::ObjectDefinition.new(
         :component_names => [:a, :b]
         # no owner
       )

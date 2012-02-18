@@ -1,8 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
-require 'object_context/dependency_resolver'
-#require 'some_random_class'
 
-describe ObjectContext::DependencyResolver do
+describe Conject::DependencyResolver do
 
   class StubbedObjectContext
     attr_accessor :objects

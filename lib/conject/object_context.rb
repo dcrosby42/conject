@@ -1,14 +1,4 @@
-class ObjectContext; end
-
-# The rest of the libraries namespace themselves under ObjectContext so
-# they must be required AFTER the initial definition of ObjectContext class.
-require 'object_context/object_definition'
-require 'object_context/class_ext_construct_with'
-require 'object_context/object_factory'
-require 'object_context/class_finder'
-require 'object_context/dependency_resolver'
-
-class ObjectContext
+class Conject::ObjectContext
 
   construct_with :parent_context, :object_factory
 
@@ -58,17 +48,6 @@ class ObjectContext
     @cache.keys.include?(name)
   end
 
-  class << self
-    def default
-      @default ||= ObjectContext.new(
-        :parent_context => nil,
-        :object_factory => ObjectContext::ObjectFactory.new(
-          :class_finder => ObjectContext::ClassFinder.new,
-          :dependency_resolver => ObjectContext::DependencyResolver.new
-        )
-      )
-    end
-  end
 end
 
 

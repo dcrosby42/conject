@@ -1,8 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
-require 'object_context/utilities'
 
-describe ObjectContext::Utilities do
-subject do described_class end
+describe Conject::Utilities do
+  subject do described_class end
 
   before do
     @class_a = Class.new do end

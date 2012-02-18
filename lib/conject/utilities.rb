@@ -1,4 +1,4 @@
-module ObjectContext::Utilities 
+module Conject::Utilities 
   class << self
     def has_zero_arg_constructor?(klass)
       init_arity = klass.instance_method(:initialize).arity

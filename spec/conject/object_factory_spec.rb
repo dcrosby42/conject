@@ -1,9 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
-require 'object_context/object_factory'
-require 'object_context/utilities'
-# require 'object_context/composition_error'
 
-describe ObjectContext::ObjectFactory do
+describe Conject::ObjectFactory do
 
   subject do
     described_class.new component_map
@@ -27,7 +24,7 @@ describe ObjectContext::ObjectFactory do
   describe "#construct_new" do
     before do
       class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
-      ObjectContext::Utilities.stub(:has_zero_arg_constructor?).and_return true
+      Conject::Utilities.stub(:has_zero_arg_constructor?).and_return true
     end
 
     describe "when target class has an object definition (implying composition dependencies)" do
@@ -57,7 +54,7 @@ describe ObjectContext::ObjectFactory do
     describe "when target class has no object def, but also a non-default constructor" do
       before do
         my_object_class.should_receive(:has_object_definition?).and_return false
-        ObjectContext::Utilities.stub(:has_zero_arg_constructor?).and_return false
+        Conject::Utilities.stub(:has_zero_arg_constructor?).and_return false
       end
 
       it "raises a CompositionError" do

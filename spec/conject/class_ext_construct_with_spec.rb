@@ -129,7 +129,7 @@ describe "Class" do
     describe "when object map does not contain any required objects" do
       it "raises a composition error explaining missing objects" do
         lambda do subject.new({}) end.should raise_error(
-          ObjectContext::CompositionError, 
+          Conject::CompositionError, 
           /missing required.*object1.*object2/i
         )
       end
@@ -138,7 +138,7 @@ describe "Class" do
     describe "when object map contains only SOME of the required objects" do
       it "raises a composition error explaining which missing objects" do
         lambda do subject.new(:object2 => "ok") end.should raise_error(
-          ObjectContext::CompositionError, 
+          Conject::CompositionError, 
           /missing required.*object1/i
         )
       end
@@ -154,7 +154,7 @@ describe "Class" do
             :stop => "whining"
           ) 
         end.should raise_error(
-          ObjectContext::CompositionError, 
+          Conject::CompositionError, 
           /unexpected object.*not_even_supposed.*stop/i
         )
       end
@@ -168,7 +168,7 @@ describe "Class" do
             :not_even_supposed => "to be here"
           )
         end.should raise_error(
-          ObjectContext::CompositionError, 
+          Conject::CompositionError, 
           /missing required.*object2.*unexpected object.*not_even_supposed/i
         )
       end

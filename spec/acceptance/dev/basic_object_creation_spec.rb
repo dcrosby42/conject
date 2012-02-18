@@ -6,7 +6,7 @@ require 'wood'
 require 'nails'
 
 describe "basic object creation" do
-  subject { ObjectContext.default }
+  subject { Conject.default_object_context }
 
   it "constructs simple objects" do
     obj = subject.get('some_random_class')

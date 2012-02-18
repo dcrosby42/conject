@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
-describe ObjectContext::ObjectDefinition do
+describe Conject::ObjectDefinition do
   def new_def(*args)
-    ObjectContext::ObjectDefinition.new(*args)
+    Conject::ObjectDefinition.new(*args)
   end
 
   it "has a field for :component_names and :owner and can be built with them" do

@@ -1,13 +1,10 @@
-require 'object_context/extended_metaid'
-require 'object_context/object_definition'
-require 'object_context/composition_error'
 
 class Class
 
   def construct_with(*syms)
     klass = self
 
-    object_def = ObjectContext::ObjectDefinition.new(:owner => klass, :component_names => syms)
+    object_def = Conject::ObjectDefinition.new(:owner => klass, :component_names => syms)
     klass.meta_def :object_definition do
       object_def
     end
@@ -27,7 +24,7 @@ class Class
       required = object_def.component_names
       provided = component_map.keys
       if required.to_set != provided.to_set
-        raise ObjectContext::CompositionError.new(
+        raise Conject::CompositionError.new(
           :object_definition => object_def,
           :required => required, 
           :provided => provided)

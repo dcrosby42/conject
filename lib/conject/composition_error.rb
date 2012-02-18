@@ -1,7 +1,6 @@
-require 'object_context'
 require 'set'
 
-class ObjectContext::CompositionError < ArgumentError
+class Conject::CompositionError < ArgumentError
   def initialize(opts=nil)
     opts ||= {}
     object_def = opts[:object_definition]

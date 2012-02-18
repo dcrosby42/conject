@@ -1,8 +1,8 @@
-require File.expand_path(File.dirname(__FILE__) + "/spec_helper")
+require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
-describe ObjectContext do
+describe Conject::ObjectContext do
   subject do
-    ObjectContext.new(:parent_context => parent_context, :object_factory => object_factory)
+    Conject::ObjectContext.new(:parent_context => parent_context, :object_factory => object_factory)
   end
 
   let :parent_context do mock(:parent_context) end

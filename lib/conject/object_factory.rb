@@ -1,7 +1,5 @@
-require 'object_context'
-require 'object_context/utilities'
 
-class ObjectContext::ObjectFactory
+class Conject::ObjectFactory
   construct_with :class_finder, :dependency_resolver
 
   def construct_new(name, object_context)
@@ -18,7 +16,7 @@ class ObjectContext::ObjectFactory
       object_map = dependency_resolver.resolve_for_class(klass, object_context)
       return klass.new(object_map)
 
-    elsif ObjectContext::Utilities.has_zero_arg_constructor?(klass)
+    elsif Conject::Utilities.has_zero_arg_constructor?(klass)
       # Default construction
       return klass.new
     else

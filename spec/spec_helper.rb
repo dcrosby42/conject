@@ -11,14 +11,7 @@ $LOAD_PATH << "#{PROJECT_ROOT}/lib"
 $LOAD_PATH << "#{PROJECT_ROOT}/spec/samples"
 ENV["APP_ENV"] = "rspec"
 
-require 'object_context'
-
-# Maybe later, maybe not.  Consider using rspec mocks or rr?
-# require 'mocha'
-# RSpec.configure do |config|
-#   config.mock_with :mocha
-# end
-
+require 'conject'
 
 # Load all support files
 Dir["#{PROJECT_ROOT}/spec/support/*.rb"].each do |support|

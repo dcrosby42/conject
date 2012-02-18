@@ -1,4 +1,4 @@
-class ObjectContext::DependencyResolver
+class Conject::DependencyResolver
   #
   # Given a Class, generate a map of dependencies needed to construct a new
   # instance of that class. Dependencies are looked up (and/or instantiated, as

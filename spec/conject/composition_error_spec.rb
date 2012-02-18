@@ -1,10 +1,18 @@
 require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 
-require 'some_random_class'
 
 describe Conject::CompositionError do
   subject do 
     described_class.new construction_args
+  end
+
+  before do
+    append_test_load_path "simple_stuff"
+    require 'some_random_class'
+  end
+
+  after do
+    restore_load_path
   end
 
   let :construction_args do

@@ -18,3 +18,7 @@ Dir["#{PROJECT_ROOT}/spec/support/*.rb"].each do |support|
   require support
 end
 
+RSpec.configure do |config|
+  config.include LoadPathHelpers
+end
+

@@ -196,6 +196,16 @@ describe "Class" do
     end
 
     describe "for classes that don't use construct_with" do
+
+      before do
+        append_test_load_path "simple_stuff"
+        require 'some_random_class'
+      end
+
+      after do
+        restore_load_path
+      end
+
       it "doesn't exist" do
         require 'some_random_class'
         SomeRandomClass.should_not respond_to(:object_definition)

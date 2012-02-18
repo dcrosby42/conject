@@ -24,8 +24,12 @@ describe Conject::ObjectContext do
         subject.get(:happy).should == 'hat'
       end
 
-      it "can use strings and symbols interchangebly" do
-        subject.get('kraft').should == "verk"
+      it "support [] as shorthand for get and []= for put" do
+        subject['kraft'].should == "verk"
+
+        subject['happy'] = 'hat'
+        subject['happy'].should == 'hat'
+        subject[:happy].should == 'hat'
       end
     end
 
@@ -129,6 +133,7 @@ describe Conject::ObjectContext do
           subject.put(:a_clue, "Wodsworth")
           subject.directly_has?(:a_clue).should be_true
           subject.directly_has?(:a_clue).should be_true # twice for luck
+          subject.directly_has?('a_clue').should be_true # twice for luck
         end
       end
       describe "due to caching a previous #get" do
@@ -139,7 +144,7 @@ describe Conject::ObjectContext do
         it "returns true" do
           subject.get(:a_clue).should == "Mr Green"
           subject.directly_has?(:a_clue).should be_true
-          subject.directly_has?(:a_clue).should be_true
+          subject.directly_has?('a_clue').should be_true
         end
       end
     end
@@ -148,6 +153,34 @@ describe Conject::ObjectContext do
       it "returns false" do
         subject.directly_has?(:a_clue).should == false
       end
+    end
+  end
+
+  describe "#in_subcontext" do
+    it "yields a new context with the given context as its parent" do
+      subcontext_executed = false
+      subsubcontext_executed = false
+      ident = Object.new
+      subject.put("identifier", ident)
+      subject.in_subcontext do |subcontext|
+        subcontext_executed = true
+        subcontext.class.should == Conject::ObjectContext # See it's an ObjectContext
+        subcontext.object_id.should_not == subject.object_id # See it's different
+        subcontext.get("identifier").object_id.should == ident.object_id # See it has access to the parent
+
+        ident2 = Object.new
+        subcontext.put("sub_ident", ident2)
+        subcontext.in_subcontext do |subsub|
+          subsubcontext_executed = true
+          subsub.class.should == Conject::ObjectContext # See it's an ObjectContext
+          subsub.object_id.should_not == subject.object_id # See it's different
+          subsub.object_id.should_not == subcontext.object_id # See it's different
+          subsub.get("identifier").object_id.should == ident.object_id # See it has access to the parent
+          subsub.get("sub_ident").object_id.should == ident2.object_id # See it has access to the parent's parent
+        end
+      end
+      subcontext_executed.should be_true
+      subsubcontext_executed.should be_true
     end
   end
 end

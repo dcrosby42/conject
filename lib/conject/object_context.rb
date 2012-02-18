@@ -11,6 +11,8 @@ class Conject::ObjectContext
     @cache[name.to_sym] = object
   end
 
+  alias_method :[]=, :put
+
   # Retrieve a named object from this context.
   #   If the object is already existant in this context, return it.
   #   If we have a parent context and it contains the requested object, get and return object from parent context. (Recursive upward search)
@@ -29,6 +31,8 @@ class Conject::ObjectContext
     end
   end
 
+  alias_method :[], :get
+
   # Indicates if this context, or any parent context, contains the requested object in its cache.
   def has?(name)
     return true if directly_has?(name)
@@ -37,7 +41,7 @@ class Conject::ObjectContext
     if !parent_context.nil?
       return parent_context.has?(name)
     else
-      # I don't have it.  My parent doesn't have it.
+      # I don't have it, and neither do my ancestors.
       return false
     end
   end
@@ -45,7 +49,11 @@ class Conject::ObjectContext
   # Indicates if this context has the requested object in its own personal cache.
   # (Does not consult any parent contexts.)
   def directly_has?(name)
-    @cache.keys.include?(name)
+    @cache.keys.include?(name.to_sym)
+  end
+
+  def in_subcontext
+    yield Conject.create_object_context(self) if block_given?
   end
 
 end

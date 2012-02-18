@@ -6,13 +6,22 @@ module Conject
   # serve as the root of all other ObjectContexts.
   #
   def self.default_object_context
-    @default_object_context ||= Conject::ObjectContext.new(
-      :parent_context => nil,
-      :object_factory => Conject::ObjectFactory.new(
-        :class_finder => Conject::ClassFinder.new,
-        :dependency_resolver => Conject::DependencyResolver.new
-      )
-    ) #...wouldn't it be nice if I could use Conject to build this context...?
+    @default_object_context ||= create_object_context(nil)
+  end
+
+  def self.default_object_factory
+    @default_object_factory ||=  Conject::ObjectFactory.new(
+      :class_finder => Conject::ClassFinder.new,
+      :dependency_resolver => Conject::DependencyResolver.new
+    )
+  end
+
+  def self.create_object_context(parent_context, object_factory=nil)
+    object_factory ||= default_object_factory
+    Conject::ObjectContext.new(
+      :parent_context => parent_context,
+      :object_factory => object_factory
+    )
   end
 end
 

@@ -1,0 +1,9 @@
+Sketch out some more use cases
+
+Move / copy test data (loadable classes) into spec/acceptance/testdata
+Make helpers for accessing that folder
+Make helper to set load path for a specific test
+
+Move basic object creation spec to regression
+
+

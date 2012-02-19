@@ -1,3 +1,4 @@
+require "conject/version"
 
 module Conject
   #

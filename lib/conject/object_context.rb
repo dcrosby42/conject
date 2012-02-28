@@ -4,7 +4,7 @@ module Conject
     construct_with :parent_context, :object_factory
 
     def initialize
-      @cache = {}
+      @cache = { :this_object_context => self }
     end
 
     # Inject a named object into this context

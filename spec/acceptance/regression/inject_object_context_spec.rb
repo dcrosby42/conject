@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper")
 
-describe "ObjectContext" do
+describe "object referencing its own context" do
   subject { Conject.default_object_context }
 
   before do
@@ -12,11 +12,11 @@ describe "ObjectContext" do
     restore_load_path
   end
 
-  it "caches a reference to itself using the name :this_object_context" do
+  it "ObjectContext caches a reference to itself using the name :this_object_context" do
     subject[:this_object_context].should == subject
   end
 
-  it "can therefore provide :this_object_context as a reference to the constructing ObjectContext " do
+  it "an object can inject :this_object_context as a reference to its constructing ObjectContext" do
     master = subject.get('master_of_puppets')
     master.this_object_context.should == subject
 

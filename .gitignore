@@ -4,3 +4,4 @@ tags
 *.swo
 pkg
 /README.html
+Gemfile.lock

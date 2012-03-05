@@ -36,9 +36,12 @@ class Class
 
     # Tidbits of state that our dynamically-defined functions herein
     # will close over.
-    object_context_prep = {
-      :initialize_has_been_wrapped => false,  # keep track of when a class's :initialize method has been wrapped
-    }
+    klass.meta_def :object_context_prep do 
+      @object_context_prep ||= {
+        :initialize_has_been_wrapped => false
+      }
+    end
+    klass.meta_eval do private :object_context_prep end
     
     # Alias :new such that we can wrap and invoke it later
     klass.meta_eval do 

@@ -21,6 +21,5 @@ describe "basic inheritance " do
     guest.should be
     guest.tv.should == tv
     guest.front_desk.should == front_desk
-    guest.foo.should == 'foo'
   end
 end

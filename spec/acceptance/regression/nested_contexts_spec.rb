@@ -2,9 +2,9 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper")
 
 describe "nested contexts" do
-  subject { Conject.default_object_context }
+  subject { Conject.create_object_context(nil) }
 
-  let(:root_context) { Conject.default_object_context }
+  let(:root_context) { subject }
 
   before do
     append_test_load_path "basic_composition"

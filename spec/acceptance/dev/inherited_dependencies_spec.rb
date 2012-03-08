@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper")
 
 describe "basic inheritance " do
-  subject { Conject.default_object_context }
+  subject { Conject.create_object_context(nil) }
 
   before do
     append_test_load_path "basic_composition"

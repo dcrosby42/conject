@@ -21,11 +21,12 @@ class Class
     end
 
     klass.class_def_private :set_components do |component_map|
-      required = object_def.component_names
+      obj_def = self.class.object_definition
+      required = obj_def.component_names
       provided = component_map.keys
       if required.to_set != provided.to_set
         raise Conject::CompositionError.new(
-          :object_definition => object_def,
+          :object_definition => obj_def,
           :required => required, 
           :provided => provided)
       end

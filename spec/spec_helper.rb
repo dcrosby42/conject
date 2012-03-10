@@ -20,5 +20,6 @@ end
 
 RSpec.configure do |config|
   config.include LoadPathHelpers
+  config.include ConjectHelpers
 end
 

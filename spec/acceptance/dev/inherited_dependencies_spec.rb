@@ -39,7 +39,7 @@ describe "basic inheritance" do
   end
 
   context "[initializers]" do
-    context "superclass has user-defined #initialize with no args" do
+    context "superclass has 0-arg #initialize" do
       class Mammal
         construct_with :fur
         attr_reader :temp
@@ -56,52 +56,6 @@ describe "basic inheritance" do
         m.temp.should == 98.6
       end
 
-      context "subclass has user-defined #initialize" do
-        context "with 1 arg" do
-          class Ape < Mammal
-            construct_with :fur,:tree
-            attr_accessor :got_map
-            def initialize(map)
-              @got_map = map
-              super
-            end
-          end
-
-          let(:chauncy) { subject[:ape] }
-
-          it "invokes subclass custom #initialize with component map" do
-            fur = subject[:fur]
-            tree = subject[:tree]
-            chauncy.got_map.should == { fur: fur, tree: tree }
-          end
-
-          it "invokes superclass #initialize" do
-            chauncy.temp.should == 98.6
-          end
-        end
-
-        context "with 0 args" do
-          class Dog < Mammal
-            construct_with :fur
-            attr_accessor :legs
-            def initialize
-              @legs = 4
-              super :whoa_there # superclass has a Conjected #initialize which requires the component map arg, though it's not used.  Ugh.
-            end
-          end
-          
-          let(:indy) { subject[:dog] }
-
-          it "invokes subclass #initialize" do
-            indy.legs.should == 4
-          end
-
-          it "invokes superclass #initialize" do
-            indy.temp.should == 98.6
-          end
-        end
-      end
-
       context "subclass has default #initialize" do
         class Cat < Mammal
           construct_with :fur
@@ -109,6 +63,50 @@ describe "basic inheritance" do
 
         it "invokes superclass #initialize" do
           subject[:cat].temp.should == 98.6
+        end
+      end
+
+      context "subclass has 1-arg #initialize that invokes #super" do
+        class Ape < Mammal
+          construct_with :fur,:tree
+          attr_accessor :got_map
+          def initialize(map)
+            @got_map = map
+            super
+          end
+        end
+
+        let(:chauncy) { subject[:ape] }
+
+        it "invokes subclass custom #initialize with component map" do
+          fur = subject[:fur]
+          tree = subject[:tree]
+          chauncy.got_map.should == { fur: fur, tree: tree }
+        end
+
+        it "invokes superclass #initialize" do
+          chauncy.temp.should == 98.6
+        end
+      end
+
+      context "subclass has 0-arg #initialize that invokes #super" do
+        class Dog < Mammal
+          construct_with :fur
+          attr_accessor :legs
+          def initialize
+            @legs = 4
+            super :whoa_there # superclass has a Conjected #initialize which requires the component map arg, though it's not used.  Ugh.
+          end
+        end
+        
+        let(:indy) { subject[:dog] }
+
+        it "invokes subclass #initialize" do
+          indy.legs.should == 4
+        end
+
+        it "invokes superclass #initialize" do
+          indy.temp.should == 98.6
         end
       end
 
@@ -135,8 +133,121 @@ describe "basic inheritance" do
           subject[:shrew].temp.should be_nil
         end
       end
-
     end
-  end
 
+
+
+
+
+
+    context "superclass has 1-arg #initialize" do
+      class Reptile
+        construct_with :scales
+        attr_reader :super_map
+        def initialize(map)
+          @super_map = map
+        end
+      end
+
+      class Scales; end
+      class Rock; end
+      class Shell; end
+
+      it "invokes super #initialize with component map" do
+        subject[:reptile].super_map.should == { scales: subject[:scales] }
+      end
+
+      context "subclass has default #initialize" do
+        class Snake < Reptile
+          construct_with :scales
+        end
+
+        it "invokes superclass #initialize" do
+          subject[:reptile].super_map.should == { scales: subject[:scales] }
+        end
+      end
+
+      context "subclass has 1-arg #initialize that invokes #super" do
+        class Lizard < Reptile
+          construct_with :scales,:rock
+          attr_accessor :got_map
+          def initialize(map)
+            @got_map = map
+            super
+          end
+        end
+
+        let(:harry) { subject[:lizard] }
+
+        it "invokes subclass custom #initialize with component map" do
+          scales = subject[:scales]
+          rock = subject[:rock]
+          harry.got_map.should == { scales: scales, rock: rock }
+        end
+
+        it "invokes superclass #initialize with component_map" do
+          scales = subject[:scales]
+          rock = subject[:rock]
+          harry.super_map.should == { scales: scales, rock: rock }
+        end
+      end
+
+      #
+      # This case--where a subclass has a user-defined #initialize, which does
+      # not accept an argument (will not be passed the component map at construct time)
+      # invokes super with some bs argument because we CANNOT SUPPLY super with its
+      # needs.  User SHOULD accept the component_map as an argument to #initialize
+      # and let the map float to super class.
+      # 
+      context "subclass has 0-arg #initialize that invokes #super" do
+        class Turtle < Reptile
+          construct_with :scales, :shell
+          attr_accessor :tail
+          def initialize
+            @tail = true
+            super :theres_ur_problem # stoopid
+          end
+        end
+        
+        let(:franklin) { subject[:turtle] }
+
+        it "invokes subclass #initialize" do
+          franklin.tail.should == true
+        end
+
+        it "invokes superclass #initialize with... fuh..." do
+          franklin.super_map.should == :theres_ur_problem
+        end
+      end
+
+      context "subclass has a no-arg #initialize that does NOT invoke #super" do
+        class Aligator < Reptile
+          construct_with :scales
+          def initialize
+          end
+        end
+
+        it "does not invoke superclass #initiailize" do
+          subject[:aligator].super_map.should be_nil
+        end
+      end
+
+      context "subclass has a 1-arg #initialize that does NOT invoke #super" do
+        class Croc < Reptile
+          construct_with :scales
+          attr_reader :my_map
+          def initialize(map)
+            @my_map = map
+          end
+        end
+
+        it "does not invoke superclass #initiailize" do
+          subject[:croc].super_map.should be_nil
+          subject[:croc].my_map.should == { scales: subject[:scales] }
+        end
+
+      end
+    end
+
+  end
 end

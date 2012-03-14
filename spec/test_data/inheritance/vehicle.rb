@@ -1,4 +1,11 @@
 class Vehicle
   construct_with :body, :wheel
-  public :body, :wheel
+
+  def hit_body
+    body.hit
+  end
+
+  def hit_wheel
+    wheel.hit
+  end
 end

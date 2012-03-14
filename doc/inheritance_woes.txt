@@ -1,0 +1,57 @@
+
+class Mammal
+  construct_with :fur
+end
+
+class Cat < Mammal
+end
+
+
+Things Cat will inherit from Mammal:
+
+  .new
+  .actual_new
+
+  .object_definition
+
+  .object_context_prep (indirectly)
+    
+  #initialize(component_map) (will be overridden)
+  #actual_initialize (will get stomped)
+
+Calling Cat.new 
+
+
+Rationale: Why does Conject re-implement .new for classes that use construct_with ?
+
+To get in front of normal object construction.  I wanted to get instances built up
+before the normal, user-defined #initialize gets called.
+
+
+
+
+
+
+
+4 initialize cases for subclasses
+  subclass has defined its own #initialize and calls super
+  subclass has defined its own #initialize and DOES NOT CALL super
+    X
+  superclass defined its own #initialize and it has been wrapped by Conject to accept component map
+  superclass defined its own #initialize, but it HAS NOT BEEN WRAPPED YET
+  superclass DOES NOT DEFINE its own #initialize, and it has been wrapped by Conject
+  superclass DOES NOT DEFINE its own #initialize, but it HAS NOT BEEN WRAPPED YET
+
+These circumstances affect when/if set_comonents gets called in the superclass 
+
+
+class A
+  construct_with :b
+end
+
+class Aa < A
+  construct_with :b, :c
+end
+
+- if A gets instantiated first, A#actual_initialize is created and A#initialize is rewritten
+- Instantiating Aa invokes actual_initialize with the component_map which invokes Conjected A#initialize ... which invokes :actual_initialize which has been re-aliased by the subclass and NO LONGER REFERS TO THE ORIGINAL CONSTRUCTOR

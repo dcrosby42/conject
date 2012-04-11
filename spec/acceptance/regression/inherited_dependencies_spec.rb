@@ -136,10 +136,6 @@ describe "basic inheritance" do
     end
 
 
-
-
-
-
     context "superclass has 1-arg #initialize" do
       class Reptile
         construct_with :scales
@@ -249,5 +245,24 @@ describe "basic inheritance" do
       end
     end
 
+  end
+
+  context "subclass not declaring deps, though its superclass DOES have deps" do
+    let(:parent) do
+      Class.new do 
+        construct_with :home, :money
+      end
+    end
+
+    let(:child) do
+      Class.new(parent) do
+      end
+    end
+
+    it "raises an error at init time" do
+      lambda do
+        child.new nil
+      end.should raise_error(/ancestor.*construct_with.*dependencies.*instantiate/)
+    end
   end
 end

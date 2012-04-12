@@ -57,4 +57,5 @@ end
 context.configure :use_class_singletons => true
 
 context.configure_object :s3 => { :use_class_singleton => true }
+# same as: context[:s3] = S3 ??
 

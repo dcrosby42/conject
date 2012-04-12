@@ -20,7 +20,6 @@ module Conject
     #   If the object exists nowhere in this or a super context: construct, cache and return a new instance of the requested object using the object factory.
     def get(name)
       name = name.to_sym
-      object = @cache[name]
       return @cache[name] if @cache.keys.include?(name)
       
       if parent_context and parent_context.has?(name)

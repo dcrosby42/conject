@@ -1,9 +1,20 @@
-Sketch out some more use cases
+Features:
+  customer construction lambda via configure_objects
+
+  Class singletons:
+    use_class_in_context
+    class_depends_on
+
+  context.configure( :use_class_singletons => true)
+
+  ObjectContext#no_cache? <- reimplement for recursive upward search of object configs
+
+  contexts can accept configurations targeted at named subcontext
+
+  Support classes namespaced to modules
+
 
 Move / copy test data (loadable classes) into spec/acceptance/testdata
 Make helpers for accessing that folder
 Make helper to set load path for a specific test
-
-Move basic object creation spec to regression
-
 

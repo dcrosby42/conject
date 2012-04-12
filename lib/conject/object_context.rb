@@ -70,6 +70,7 @@ module Conject
 
     private
 
+    # Returns true if an object has been specifically declared as non-cacheable.
     def no_cache?(name)
       @object_configs[name.to_sym][:cache] == false
     end

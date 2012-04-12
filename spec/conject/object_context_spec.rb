@@ -119,10 +119,12 @@ describe Conject::ObjectContext do
 
       describe "when there is a parent context" do
         it "delegates the question to the parent context" do
-          parent_context.should_receive(:has?).with(:a_clue).and_return("the parent answer")
-          subject.has?(:a_clue).should == "the parent answer"
+          parent_context.should_receive(:walk_up_contexts).and_yield(parent_context)
+          parent_context.should_receive(:directly_has?).with(:a_clue).and_return(true)
+          subject.has?(:a_clue).should == true
         end
       end
+
     end
   end
 

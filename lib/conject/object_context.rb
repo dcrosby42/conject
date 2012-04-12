@@ -35,17 +35,40 @@ module Conject
     alias_method :[], :get
 
     # Indicates if this context, or any parent context, contains the requested object in its cache.
-    def has?(name)
-      return true if directly_has?(name)
+    # def has?(name)
+    #   return true if directly_has?(name)
 
-      # Ask parent (if i have a parent) if I don't have the object:
-      if !parent_context.nil?
-        return parent_context.has?(name)
-      else
-        # I don't have it, and neither do my ancestors.
-        return false
-      end
+    #   # Ask parent (if i have a parent) if I don't have the object:
+    #   if !parent_context.nil?
+    #     return parent_context.has?(name)
+    #   else
+    #     # I don't have it, and neither do my ancestors.
+    #     return false
+    #   end
+    # end
+
+    def walk_up_contexts(&block)
+      yield self
+      parent_context.walk_up_contexts(&block) unless parent_context.nil?
     end
+
+    def has?(name)
+      walk_up_contexts do |context|
+        return true if context.directly_has?(name)
+      end
+      return false
+# 
+#       return true if directly_has?(name)
+# 
+#       # Ask parent (if i have a parent) if I don't have the object:
+#       if !parent_context.nil?
+#         return parent_context.has?(name)
+#       else
+#         # I don't have it, and neither do my ancestors.
+#         return false
+#       end
+    end
+
     
     # Indicates if this context has the requested object in its own personal cache.
     # (Does not consult any parent contexts.)

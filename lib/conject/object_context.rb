@@ -5,6 +5,7 @@ module Conject
 
     def initialize
       @cache = { :this_object_context => self }
+      @object_configs = Hash.new do |h,k| h[k] = {} end
     end
 
     # Inject a named object into this context
@@ -26,7 +27,7 @@ module Conject
         return parent_context.get(name)
       else
         object = object_factory.construct_new(name,self)
-        @cache[name] = object
+        @cache[name] = object unless no_cache?(name)
         return object
       end
     end
@@ -52,13 +53,25 @@ module Conject
       @cache.keys.include?(name.to_sym)
     end
 
+    # Create and yield a new ObjectContext with this ObjectContext as its parent
     def in_subcontext
       yield Conject.create_object_context(self) if block_given?
     end
 
 
-    def configure_objects(conf)
-      # TODO
+    #
+    # Allow configuration options to be set for named objects.
+    #
+    def configure_objects(conf={})
+      conf.each do |key,opts|
+        @object_configs[key.to_sym].merge!(opts)
+      end
+    end
+
+    private
+
+    def no_cache?(name)
+      @object_configs[name.to_sym][:cache] == false
     end
   end
 end

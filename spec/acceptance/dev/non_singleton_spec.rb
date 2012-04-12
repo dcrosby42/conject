@@ -29,7 +29,7 @@ describe "configuring objects to be non-cacheable" do
     f1.should_not == f2
 
     # nails should also be unique:
-    f1.nails.should_note == f2.nails
+    f1.nails.should_not == f2.nails
 
     # context should not retain references to fence or nails:
     subject.has?(:fence).should == false
@@ -44,6 +44,9 @@ describe "configuring objects to be non-cacheable" do
 
 end
 
+#
+# other syntax ideas:
+#
     # subject.no_cache(:fence)
 
     # subject.do_not_cache(:fence)

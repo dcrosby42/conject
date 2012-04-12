@@ -183,4 +183,30 @@ describe Conject::ObjectContext do
       subsubcontext_executed.should be_true
     end
   end
+
+  describe "#configure_objects" do
+    describe ":cache => false" do
+      before do
+        parent_context.stub(:has?).and_return(false)
+        parent_context.should_not_receive(:get)
+        @first_burger = "first burger"
+        @second_burger = "second burger"
+
+        subject.configure_objects :cheezburger => { :cache => false }
+      end
+
+      it "causes the Context not to cache a constructed object, but to build new each time" do
+        object_factory.should_receive(:construct_new).with(:cheezburger, subject).and_return(@first_burger)
+        object_factory.should_receive(:construct_new).with(:cheezburger, subject).and_return(@second_burger)
+
+        subject[:cheezburger].should == @first_burger
+        subject[:cheezburger].should == @second_burger
+      end
+    end
+
+    # describe "for already-cached objects" do
+    #   it "raises an error"
+    # end
+
+  end
 end

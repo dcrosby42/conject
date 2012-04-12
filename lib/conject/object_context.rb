@@ -56,5 +56,9 @@ module Conject
       yield Conject.create_object_context(self) if block_given?
     end
 
+
+    def configure_objects(conf)
+      # TODO
+    end
   end
 end

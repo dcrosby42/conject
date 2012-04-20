@@ -7,11 +7,11 @@ Retrieve and relate objects within contexts.  Provides dependency injection conv
     require 'conject'
 
     class Wood
-      def to_s "Wood" end
+      def to_s; "Wood"; end
     end
 
     class Nails
-      def to_s "Nails" end
+      def to_s; "Nails"; end
     end
 
     class Fence
@@ -23,5 +23,6 @@ Retrieve and relate objects within contexts.  Provides dependency injection conv
     end
 
     fence = Conject.default_object_context.get(:fence)
-    => "I'm made of Wood and Nails"
+    puts fence
+    #=> "I'm made of Wood and Nails"
 

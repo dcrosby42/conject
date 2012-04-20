@@ -1,0 +1,16 @@
+Conject v0.0.5
+  * ObjectContext.configure_objects 
+	* ... support :cache => false for objects, causing them to be non-singletons in context
+	* ... support :construct => lambda do |name, context| Something.new end
+
+Conject v0.0.4
+  * Bug fixes / support for dealing with inheritance, ie, objects that inherit
+	from Conjected objects etc
+
+Conject v0.0.3
+	* ObjectContext now caches self reference with key 'this_object_context'
+	allowing context injection into objects
+
+Conject v0.0.1
+	* Automatic Type 1 object construction
+	* Nested ObjectContexts

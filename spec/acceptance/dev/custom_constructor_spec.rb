@@ -10,7 +10,7 @@ describe "configuring objects to be built with a lambda" do
     require 'nails'
   end
 
-  let :wood_subsitute do
+  let :wood_substitute do
     Class.new do
       def to_s
         "MDF"

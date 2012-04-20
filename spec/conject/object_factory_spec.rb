@@ -22,46 +22,96 @@ describe Conject::ObjectFactory do
   let :my_objects_components do mock(:my_objects_components) end
 
   describe "#construct_new" do
-    before do
-      class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
-      Conject::Utilities.stub(:has_zero_arg_constructor?).and_return true
+    describe "for Type 1 object construction" do
+      before do
+        object_context.stub(:get_object_config).and_return({})
+
+        class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
+        Conject::Utilities.stub(:has_zero_arg_constructor?).and_return true
+      end
+
+      describe "when target class has an object definition (implying composition dependencies)" do
+        before do
+          my_object_class.should_receive(:has_object_definition?).and_return true
+        end
+
+        it "finds the object definition, pulls its deps, and instantiates a new instance" do
+          dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context).and_return my_objects_components
+          my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
+
+          subject.construct_new(my_object_name, object_context).should == my_object
+        end
+      end
+
+      describe "when target class has no object definition" do
+        before do
+          my_object_class.should_receive(:has_object_definition?).and_return false
+        end
+
+        it "creates a new instance of the class without any arguments" do
+          my_object_class.should_receive(:new).and_return(my_object)
+          subject.construct_new(my_object_name, object_context).should == my_object
+        end
+      end
+
+      describe "when target class has no object def, but also a non-default constructor" do
+        before do
+          my_object_class.should_receive(:has_object_definition?).and_return false
+          Conject::Utilities.stub(:has_zero_arg_constructor?).and_return false
+        end
+
+        it "raises a CompositionError" do
+          lambda do
+            subject.construct_new(my_object_name, object_context)
+          end.should raise_error(ArgumentError)
+        end
+      end
     end
 
-    describe "when target class has an object definition (implying composition dependencies)" do
+    describe "for custom lambda construction" do
+      let(:object_config) do { :construct => lambda do "The Object" end } end
+      let(:object_config2) do { :construct => lambda do |object_context| { :the_oc => object_context } end } end
+      let(:object_config3) do { :construct => lambda do |name, object_context| { :the_name => name, :the_oc => object_context } end } end
+      let(:object_config4) do { :construct => lambda do raise("the roof") end } end
+      let(:object_config5) do { :construct => lambda do |a,b,c| "whatev" end } end
+
       before do
-        my_object_class.should_receive(:has_object_definition?).and_return true
+        object_context.stub(:get_object_config).with(:the_object).and_return(object_config)
+        object_context.stub(:get_object_config).with(:the_other_object).and_return(object_config2)
+        object_context.stub(:get_object_config).with(:the_third_object).and_return(object_config3)
+        object_context.stub(:get_object_config).with(:the_fail_object).and_return(object_config4)
+        object_context.stub(:get_object_config).with(:the_two_many_params).and_return(object_config5)
       end
 
-      it "finds the object definition, pulls its deps, and instantiates a new instance" do
-        dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context).and_return my_objects_components
-        my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
-
-        subject.construct_new(my_object_name, object_context).should == my_object
-      end
-    end
-
-    describe "when target class has no object definition" do
-      before do
-        my_object_class.should_receive(:has_object_definition?).and_return false
+      it "invokes the configured lambda in order to build the object" do
+        subject.construct_new(:the_object, object_context).should == "The Object"
       end
 
-      it "creates a new instance of the class without any arguments" do
-        my_object_class.should_receive(:new).and_return(my_object)
-        subject.construct_new(my_object_name, object_context).should == my_object
-      end
-    end
-
-    describe "when target class has no object def, but also a non-default constructor" do
-      before do
-        my_object_class.should_receive(:has_object_definition?).and_return false
-        Conject::Utilities.stub(:has_zero_arg_constructor?).and_return false
+      it "supplies object_context for lambdas with arity of 1" do
+        obj = subject.construct_new(:the_other_object, object_context)
+        obj.should be
+        obj[:the_oc].should == object_context
       end
 
-      it "raises a CompositionError" do
-        lambda do
-          subject.construct_new(my_object_name, object_context)
-        end.should raise_error(ArgumentError)
+      it "supplies name, object_context for lambdas with arity of 2" do
+        obj = subject.construct_new(:the_third_object, object_context)
+        obj.should be
+        obj[:the_name].should == :the_third_object
+        obj[:the_oc].should == object_context
       end
+
+      describe "when lambda has more than two args" do
+        it "raises an error" do
+          lambda do subject.construct_new(:the_fail_object, object_context) end.should raise_error(/the roof/)
+        end
+      end
+
+      describe "when lambda raises an error" do
+        it "raises an error" do
+          lambda do subject.construct_new(:the_two_many_params, object_context) end.should raise_error(/constructor lambda takes 0, 1 or 2 params/i)
+        end
+      end
+
     end
   end
 end

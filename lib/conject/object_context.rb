@@ -64,15 +64,25 @@ module Conject
     #
     def configure_objects(conf={})
       conf.each do |key,opts|
-        @object_configs[key.to_sym].merge!(opts)
+        get_object_config(key).merge!(opts)
       end
     end
 
-    private
-
-    # Returns true if an object has been specifically declared as non-cacheable.
-    def no_cache?(name)
-      @object_configs[name.to_sym][:cache] == false
+    #
+    # Get the object configuration options for the given name
+    #
+    def get_object_config(name)
+      @object_configs[name.to_sym]
     end
+
+    private 
+
+    #
+    # Returns true if an object has been specifically declared as non-cacheable.
+    #
+    def no_cache?(name)
+      get_object_config(name)[:cache] == false
+    end
+
   end
 end

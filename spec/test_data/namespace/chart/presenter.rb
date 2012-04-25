@@ -1,7 +1,5 @@
 module Chart
   class Presenter
-    construct_with :chart__model, :chart__view
-
-    public :model, :view
+    construct_with 'chart/model', 'chart/view'
   end
 end

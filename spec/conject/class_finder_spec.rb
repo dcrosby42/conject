@@ -3,7 +3,10 @@ require File.expand_path(File.dirname(__FILE__) + "/../spec_helper")
 describe Conject::ClassFinder do
   before do
     append_test_load_path "simple_stuff"
+    append_test_load_path "namespace"
     require 'some_random_class'
+    require 'chart/model'
+    require 'somewhere/deep/inside/the/earth'
   end
 
   after do
@@ -25,12 +28,32 @@ describe Conject::ClassFinder do
   it "raises an error if the name doesn't imply a regular class in the current runtime" do
     lambda do
       subject.find_class('something_undefined')
-    end.should raise_error(/could not find class.*something_undefined/i)
+    end.should raise_error(/could not find class.*SomethingUndefined/i)
   end
 
   it "raises an error for nil input" do
     lambda do
       subject.find_class('something_undefined')
-    end.should raise_error(/could not find class.*something_undefined/i)
+    end.should raise_error(/could not find class.*SomethingUndefined/i)
+  end
+
+  context "namespaced" do
+    it "can find namespaced classes for objects with / in name" do
+      c = subject.find_class("chart/model")
+      c.should_not be_nil
+      c.should == Chart::Model
+    end
+
+    it "can find deeply namespaced classes for objects with / in name" do
+      c = subject.find_class("somewhere/deep/inside/the/earth")
+      c.should_not be_nil
+      c.should == Somewhere::Deep::Inside::The::Earth
+    end
+
+    it "raises an error for a misstep along the way" do
+      lambda do
+        subject.find_class("somewhere/deep/above/the/earth")
+      end.should raise_error(/could not find.*Above within Somewhere::Deep/i)
+    end
   end
 end

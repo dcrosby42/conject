@@ -1,3 +1,6 @@
+ISSUE 2012-04-25: construct_with cyclic dependency checking!  Eg. Presenter construc_with :presenter -> stack overlow
+
+
 Features:
   customer construction lambda via configure_objects
 

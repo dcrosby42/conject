@@ -1,3 +1,6 @@
+Conject v0.0.6
+  * .construct_with now suppost modules - lets you references module-scoped classes like Deeply::Nested::Bird as 'deeply/nested/bird'
+
 Conject v0.0.5
   * ObjectContext.configure_objects 
 	* ... support :cache => false for objects, causing them to be non-singletons in context

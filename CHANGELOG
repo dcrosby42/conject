@@ -1,3 +1,5 @@
+Conject v0.0.7
+  (re-release due to release automation fail on my part)
 Conject v0.0.6
   * .construct_with now suppost modules - lets you references module-scoped classes like Deeply::Nested::Bird as 'deeply/nested/bird'
 

@@ -32,11 +32,11 @@ describe "module scoping" do
     obj.should_not be_nil
     obj.class.should == Chart::Presenter
 
-    model = obj.send("chart/model")
+    model = obj.send(:model)
     model.should be
     model.class.should == Chart::Model
 
-    view = obj.send("chart/view")
+    view = obj.send(:view)
     view.should be
     view.class.should == Chart::View
   end

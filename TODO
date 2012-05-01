@@ -1,5 +1,7 @@
 ISSUE 2012-04-25: construct_with cyclic dependency checking!  Eg. Presenter construc_with :presenter -> stack overlow
 
+ISSUE 2012-04-30: prevent #put for already-existant objects
+ISSUE 2012-04-30: prevent #configure_object(s) for already-existant objects
 
 Features:
   customer construction lambda via configure_objects

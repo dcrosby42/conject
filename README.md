@@ -36,6 +36,7 @@ their construction or handling.
 
 * :cache [true|false] - Enable/disable object caching in context.  If false, a new instance is created for every request for an object with the given name. Default true.
 * :construct [Proc|Lambda] - Anonymous function to call to provide the named object.  Will be cached like any other object, subject to :cache configuration for this context.
+
     context.configure_objects({
       :wood => { :cache => false },
       :nails => { :construct => lambda do "The nails" end},

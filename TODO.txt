@@ -1,4 +1,0 @@
-
-Wed Mar 14 00:44:52 EDT 2012
-
-* Cleanup meta programming in .construct_with it's NASTY

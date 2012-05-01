@@ -1,5 +1,4 @@
 ISSUE 2012-04-25: construct_with cyclic dependency checking!  Eg. Presenter construc_with :presenter -> stack overlow
-
 ISSUE 2012-04-30: prevent #put for already-existant objects
 ISSUE 2012-04-30: prevent #configure_object(s) for already-existant objects
 
@@ -18,8 +17,12 @@ Features:
 
   Support classes namespaced to modules
 
+  Conject.new_object_context (support no-args, default parent context to nil)
 
-Move / copy test data (loadable classes) into spec/acceptance/testdata
-Make helpers for accessing that folder
-Make helper to set load path for a specific test
+
+Tasks:
+  GET GOING IN TRAVIS CI
+
+  Cleanup meta programming in .construct_with it's NASTY
+
 

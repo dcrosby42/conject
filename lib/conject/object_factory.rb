@@ -73,6 +73,8 @@ module Conject
         raise ArgumentError.new("Class #{klass} has no special component needs, but neither does it have a zero-argument constructor.");
       end
 
+      return object
+
     end
   end
 end

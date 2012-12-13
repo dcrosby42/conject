@@ -72,3 +72,22 @@ Eg.
 
     # second_fence != first_fence
 
+If you'd like to ensure that certain dependencies needed by objects built in subcontexts are actually housed in the parent context, but they
+have not necessarily been cached or injected in advance, AND you've got an "owner"-like object living in that context, you can declare 
+object peers within the class definition of that owner object.  This ensures that collaborators in the subcontext will not cause the peer
+objects to be instantiated in those subcontexts as well. 
+
+    class Game
+      peer_objects :missile_coordinator, :wind_affector
+    end
+
+In this example, the instantiation of a Game instance in an object context will cause missile coordinator and wind affector to be "anchored"
+in the same context as the game instance, meaning they prefer to be instantiated here, if needed by any objects in this same context or any
+subcontexts thereof.  It also means that they will be preferred over any objects of the same name in a super context.
+
+# My ObjectContext #
+
+All classes built within an ObjectContext are able to reference the context directly via the private accessor method "#object_context", which 
+is available as early as the call to #initialize.
+
+

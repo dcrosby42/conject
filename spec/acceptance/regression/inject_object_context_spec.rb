@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper")
 
 describe "object referencing its own context" do
-  subject { Conject.create_object_context(nil) }
+  subject { new_object_context }
 
   before do
     append_test_load_path "basic_composition"

@@ -4,21 +4,24 @@ module Conject
     construct_with :class_finder, :dependency_resolver
 
     def construct_new(name, object_context)
+      object = nil
       lambda_constructor = object_context.get_object_config(name)[:construct]
       if lambda_constructor
         case lambda_constructor.arity
         when 0
-          return lambda_constructor[]
+          object = lambda_constructor[]
         when 1
-          return lambda_constructor[object_context]
+          object = lambda_constructor[object_context]
         when 2
-          return lambda_constructor[name, object_context]
+          object = lambda_constructor[name, object_context]
         else
           raise "Constructor lambda takes 0, 1 or 2 params; this lambda takes #{lambda_constructor.arity}"
         end
       else
-        return type_1_constructor(name, object_context)
+        object = type_1_constructor(name, object_context)
       end
+
+      object
     end
 
     private

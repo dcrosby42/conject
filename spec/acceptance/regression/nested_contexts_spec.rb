@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + "/../../spec_helper")
 
 describe "nested contexts" do
-  subject { Conject.create_object_context(nil) }
+  subject { new_object_context }
 
   let(:root_context) { subject }
 

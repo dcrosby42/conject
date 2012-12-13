@@ -66,9 +66,11 @@ module Conject
     #
     # Allow configuration options to be set for named objects.
     #
-    def configure_objects(conf={})
-      conf.each do |key,opts|
-        get_object_config(key).merge!(opts)
+    def configure_objects(confs={})
+      confs.each do |key,opts|
+        key = key.to_sym
+        @object_configs[key] ={} unless has_config?(key)
+        @object_configs[key].merge!(opts)
       end
     end
 
@@ -76,7 +78,7 @@ module Conject
     # Get the object configuration options for the given name
     #
     def get_object_config(name)
-      @object_configs[name.to_sym]
+      @object_configs[name.to_sym] || {}
     end
 
     private 

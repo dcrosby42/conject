@@ -31,10 +31,6 @@ describe "configuring objects to be non-cacheable" do
     # nails should also be unique:
     f1.nails.should_not == f2.nails
 
-    # context should not retain references to fence or nails:
-    subject.has?(:fence).should == false
-    subject.has?(:nails).should == false
-
     # wood should remain cached as usual, and shared
     f1.wood.should == f2.wood
     subject.has?(:wood).should == true

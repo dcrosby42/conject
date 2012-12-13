@@ -50,7 +50,7 @@ module Conject
     # Indicates if this context has the requested object in its own personal cache.
     # (Does not consult any parent contexts.)
     def directly_has?(name)
-      @cache.keys.include?(name.to_sym)
+      @cache.keys.include?(name.to_sym) or @object_configs.keys.include?(name.to_sym)
     end
 
     # Create and yield a new ObjectContext with this ObjectContext as its parent

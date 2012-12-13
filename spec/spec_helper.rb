@@ -13,6 +13,8 @@ ENV["APP_ENV"] = "rspec"
 
 require 'conject'
 
+require 'pry'
+
 # Load all support files
 Dir["#{PROJECT_ROOT}/spec/support/*.rb"].each do |support|
   require support

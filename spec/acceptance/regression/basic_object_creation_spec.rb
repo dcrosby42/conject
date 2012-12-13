@@ -7,6 +7,7 @@ describe "simple object creation" do
   before do
     append_test_load_path "simple_stuff"
     require 'some_random_class'
+    require 'class_that_uses_context_in_init'
   end
 
   after do
@@ -37,6 +38,12 @@ describe "simple object creation" do
     obj.should_not be_nil
     obj2 = subject.get(:some_random_class)
     obj.object_id.should == obj2.object_id
+  end
+
+  it "ensures access to object_context in initializer" do
+    obj = subject.get('class_that_uses_context_in_init')
+    obj.init_time_object_context.should == subject
+    obj.send(:object_context).should == subject
   end
 
 end

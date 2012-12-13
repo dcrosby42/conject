@@ -17,19 +17,20 @@ module Conject
         else
           raise "Constructor lambda takes 0, 1 or 2 params; this lambda takes #{lambda_constructor.arity}"
         end
+
+        # Provide a private accessor to the assigned object context
+        class << object
+          private
+          def object_context
+            @_conject_object_context #|| Conject.default_object_context
+          end
+        end
       else
         object = type_1_constructor(name, object_context)
       end
 
       # Stuff an internal back reference to the object context into the new object:
       object.send(:instance_variable_set, :@_conject_object_context, object_context)
-      # Provide a private accessor
-      class << object
-        private
-        def object_context
-          @_conject_object_context
-        end
-      end
 
       return object
     end
@@ -43,14 +44,30 @@ module Conject
     #
     def type_1_constructor(name, object_context)
       klass = class_finder.find_class(name)
+      object = nil
+
+      # Provide a private accessor to the assigned object context
+      klass.class_def_private :object_context do
+        @_conject_object_context || Thread.current[:current_object_context] #|| Conject.default_object_context
+      end
 
       if klass.has_object_definition?
         object_map = dependency_resolver.resolve_for_class(klass, object_context)
-        return klass.new(object_map)
+        Thread.current[:current_object_context] = object_context
+        begin 
+          object = klass.new(object_map)
+        ensure
+          Thread.current[:current_object_context] = nil
+        end
 
       elsif Utilities.has_zero_arg_constructor?(klass)
         # Default construction
-        return klass.new
+        Thread.current[:current_object_context] = object_context
+        begin
+          object = klass.new
+        ensure
+          Thread.current[:current_object_context] = nil
+        end
       else
         # Oops, out of ideas on how to build.
         raise ArgumentError.new("Class #{klass} has no special component needs, but neither does it have a zero-argument constructor.");

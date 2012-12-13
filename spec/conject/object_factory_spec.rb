@@ -25,6 +25,7 @@ describe Conject::ObjectFactory do
     describe "for Type 1 object construction" do
       before do
         object_context.stub(:get_object_config).and_return({})
+        my_object_class.stub(:class_def_private) # the effect of this is tested in acceptance tests
 
         class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
         Conject::Utilities.stub(:has_zero_arg_constructor?).and_return true

@@ -6,6 +6,8 @@ describe "object referencing its own context" do
   before do
     append_test_load_path "basic_composition"
     require 'master_of_puppets'
+    require 'ride_the_lightning'
+    require 'and_justice_for_all'
   end
 
   after do
@@ -23,6 +25,36 @@ describe "object referencing its own context" do
     master.this_object_context.get('master_of_puppets').should == master
   end
 
+  describe "NEW AND IMPROVED" do
+
+    describe "classes with object definitions" do
+      let(:justice) { subject.get('and_justice_for_all') }
+      let(:ride) { subject.get('ride_the_lightning') }
+
+      it "automatically get a private accessor for object_context, even if not requested" do
+        justice.send(:object_context).should == subject
+        ride.send(:object_context).should == subject # watching out for interaction bugs wrt dependency construction
+      end
+
+      it "can use object_context in initialize" do
+        justice.init_time_object_context.should == subject
+        ride.init_time_object_context.should == subject # watching out for interaction bugs wrt dependency construction
+      end
+    end
+
+    describe "classes WITHOUT object definitions" do
+      let(:ride) { subject.get('ride_the_lightning') }
+
+      it "automatically get a private accessor for object_context, even if not requested" do
+        ride.send(:object_context).should == subject
+      end
+
+      it "can use object_context in initialize" do
+        ride.init_time_object_context.should == subject
+      end
+    end
+
+  end
 
 end
 

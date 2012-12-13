@@ -12,11 +12,11 @@ describe "configuring objects to be built with a lambda" do
 
   let :wood_substitute do
     Class.new do
-      attr_reader :name, :object_context
+      attr_reader :name, :my_object_context
 
-      def initialize(name,object_context)
+      def initialize(name,my_object_context)
         @name = name
-        @object_context = object_context
+        @my_object_context = my_object_context
       end
 
       def to_s
@@ -35,9 +35,9 @@ describe "configuring objects to be built with a lambda" do
 
     subject.configure_objects(
       :wood => { 
-        :construct => lambda do |name,object_context|
+        :construct => lambda do |name,the_object_context|
           wood_constructs += 1
-          wood_substitute.new name,object_context
+          wood_substitute.new name,the_object_context
         end
       }
     )
@@ -46,11 +46,14 @@ describe "configuring objects to be built with a lambda" do
     fence.wood.should be
     fence.wood.to_s.should == "MDF"
     fence.wood.name.should == :wood
-    fence.wood.object_context.should == subject
+    fence.wood.my_object_context.should == subject # shows the context was passed along to the lambda
+    fence.wood.send(:object_context).should == subject # shows Conject assigned the object context on its own
     wood_constructs.should == 1
 
     subject.get(:wood).should == fence.wood
     wood_constructs.should == 1
+
+  
   end
 
 end

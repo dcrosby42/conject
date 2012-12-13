@@ -12,6 +12,7 @@ describe "nested contexts" do
     require 'front_desk'
     require 'guest'
     require 'tv'
+    require 'grass'
   end
 
   after do
@@ -79,6 +80,18 @@ describe "nested contexts" do
         room.directly_has?(:front_desk).should_not be_true
         hotel.directly_has?(:front_desk).should be_true
       end
+    end
+  end
+
+  it "assigns the correct object context to objects at each level" do
+    grass = root_context[:grass]
+    grass.should be
+    grass.send(:object_context).should == root_context
+    
+    root_context.in_subcontext do |hotel|
+      hotel.should_not == root_context
+      front_desk = hotel[:front_desk]
+      front_desk.send(:object_context).should == hotel
     end
   end
 

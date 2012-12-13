@@ -17,12 +17,15 @@ describe "basic object composition" do
   it "constructs objects by providing necessary object components" do
     fence = subject.get('fence')
     fence.should_not be_nil
+    fence.send(:object_context).should == subject
 
     fence.wood.should_not be_nil
     fence.wood.object_id.should == subject.get('wood').object_id
+    fence.wood.send(:object_context).should == subject
 
     fence.nails.should_not be_nil
     fence.nails.object_id.should == subject.get('nails').object_id
+    fence.nails.send(:object_context).should == subject
   end
 
 end

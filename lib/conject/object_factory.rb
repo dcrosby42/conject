@@ -21,7 +21,17 @@ module Conject
         object = type_1_constructor(name, object_context)
       end
 
-      object
+      # Stuff an internal back reference to the object context into the new object:
+      object.send(:instance_variable_set, :@_conject_object_context, object_context)
+      # Provide a private accessor
+      class << object
+        private
+        def object_context
+          @_conject_object_context
+        end
+      end
+
+      return object
     end
 
     private

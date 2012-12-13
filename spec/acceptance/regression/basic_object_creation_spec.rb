@@ -17,6 +17,7 @@ describe "simple object creation" do
     obj = subject.get('some_random_class')
     obj.should_not be_nil
     obj.class.should == SomeRandomClass
+    obj.send(:object_context).should == subject
   end
 
   it "caches and returns references to same objects once built" do

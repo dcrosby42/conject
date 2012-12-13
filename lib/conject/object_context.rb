@@ -23,7 +23,7 @@ module Conject
       name = name.to_sym
       return @cache[name] if @cache.keys.include?(name)
       
-      if parent_context and parent_context.has?(name)
+      if !has_config?(name) and parent_context and parent_context.has?(name)
         return parent_context.get(name)
       else
         object = object_factory.construct_new(name,self)
@@ -50,7 +50,11 @@ module Conject
     # Indicates if this context has the requested object in its own personal cache.
     # (Does not consult any parent contexts.)
     def directly_has?(name)
-      @cache.keys.include?(name.to_sym) or @object_configs.keys.include?(name.to_sym)
+      @cache.keys.include?(name.to_sym) or has_config?(name.to_sym)
+    end
+
+    def has_config?(name)
+      @object_configs.keys.include?(name.to_sym)
     end
 
     # Create and yield a new ObjectContext with this ObjectContext as its parent

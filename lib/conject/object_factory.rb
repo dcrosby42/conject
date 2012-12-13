@@ -5,7 +5,8 @@ module Conject
 
     def construct_new(name, object_context)
       object = nil
-      lambda_constructor = object_context.get_object_config(name)[:construct]
+      config = object_context.get_object_config(name)
+      lambda_constructor = config[:construct]
       if lambda_constructor
         case lambda_constructor.arity
         when 0
@@ -44,27 +45,26 @@ module Conject
     #
     def type_1_constructor(name, object_context)
       klass = class_finder.find_class(name)
-      object = nil
+
+      if !klass.object_peers.empty?
+        anchor_object_peers object_context, klass.object_peers
+      end
 
       # Provide a private accessor to the assigned object context
       klass.class_def_private :object_context do
         @_conject_object_context || Thread.current[:current_object_context] #|| Conject.default_object_context
       end
 
+      constructor_func = nil
       if klass.has_object_definition?
         object_map = dependency_resolver.resolve_for_class(klass, object_context)
-        Thread.current[:current_object_context] = object_context
-        begin 
-          object = klass.new(object_map)
-        ensure
-          Thread.current[:current_object_context] = nil
-        end
+        constructor_func = lambda do klass.new(object_map) end
 
       elsif Utilities.has_zero_arg_constructor?(klass)
         # Default construction
+        constructor_func = lambda do klass.new end
         Thread.current[:current_object_context] = object_context
         begin
-          object = klass.new
         ensure
           Thread.current[:current_object_context] = nil
         end
@@ -73,8 +73,22 @@ module Conject
         raise ArgumentError.new("Class #{klass} has no special component needs, but neither does it have a zero-argument constructor.");
       end
 
+      object = nil
+      Thread.current[:current_object_context] = object_context
+      begin 
+        object = constructor_func.call
+      ensure
+        Thread.current[:current_object_context] = nil
+      end
+
       return object
 
+    end
+
+    def anchor_object_peers(object_context, object_peers)
+      object_peers.each do |name|
+        object_context.configure_objects(name => {})
+      end
     end
   end
 end

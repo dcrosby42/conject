@@ -3,6 +3,7 @@ require "conject/version"
 require 'conject/object_definition'
 require 'conject/extended_metaid'
 require 'conject/class_ext_construct_with'
+require 'conject/class_ext_object_peers'
 require 'conject/object_context'
 require 'conject/object_factory'
 require 'conject/class_finder'

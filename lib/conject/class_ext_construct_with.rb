@@ -96,7 +96,6 @@ class Class
       # * var args (eg, def initialize(*args)).  args[0] will be the component map.  NO OTHER ARGS WILL BE PASSED. See Footnote a)
       #
       klass.meta_def :new do |component_map|
-
         # We only want to do the following one time, but we've waited until now
         # in order to make sure our metaprogramming didn't get ahead of the user's
         # own definition of initialize:

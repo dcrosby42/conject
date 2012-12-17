@@ -7,6 +7,14 @@ module Conject
       dig_for_class Object, cname_components
     end
 
+    def get_module_path(klass)
+      cname = klass.name
+      return nil unless cname =~ /::/
+      cname_components = cname.split("::")
+      cname_components.pop
+      cname_components.join("::").underscore
+    end
+
     private
 
     def dig_for_class(within, steps)

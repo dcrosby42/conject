@@ -23,9 +23,10 @@ module Conject
   end
 
   def self.default_object_factory
+    class_finder = ClassFinder.new
     @default_object_factory ||=  ObjectFactory.new(
-      :class_finder => ClassFinder.new,
-      :dependency_resolver => DependencyResolver.new
+      :class_finder => class_finder,
+      :dependency_resolver => DependencyResolver.new(:class_finder => class_finder)
     )
   end
 

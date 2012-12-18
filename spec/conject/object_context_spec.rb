@@ -152,8 +152,16 @@ describe Conject::ObjectContext do
     end
 
     describe "when the object does NOT exist in the cache" do
-      it "returns false" do
-        subject.directly_has?(:a_clue).should == false
+      describe "and there's no config for the object" do
+        it "returns false" do
+          subject.directly_has?(:a_clue).should == false
+        end
+      end
+      describe "and there IS a config for the object" do
+        it "returns true" do
+          subject.configure_objects :a_clue => { :cache => false }
+          subject.directly_has?(:a_clue).should == true
+        end
       end
     end
   end

@@ -5,7 +5,7 @@ class Class
 
     # Give instances of this class the ability to ref their object context
     klass.class_def_private :object_context do
-      @_conject_object_context || Thread.current[:current_object_context] #|| Conject.default_object_context
+      @_conject_object_context || Thread.current[:current_object_context] || Conject.default_object_context
     end
 
     # Define an internal reader method per dependency:

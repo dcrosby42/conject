@@ -81,6 +81,11 @@ module Conject
       @object_configs[name.to_sym] || {}
     end
 
+    def inspect
+      "<ObjectContext 0x#{object_id.to_s(16)}>"
+    end
+    alias :to_s :inspect
+
     private 
 
     #

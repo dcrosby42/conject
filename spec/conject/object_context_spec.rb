@@ -219,4 +219,13 @@ describe Conject::ObjectContext do
     # end
 
   end
+
+  describe "#inspect and #to_s" do
+    it "shows a custom string based on object_id" do
+      c = subject
+      obj_id_hex = c.object_id.to_s(16)
+      c.inspect.should == "<ObjectContext 0x#{obj_id_hex}>"
+      c.to_s.should    == "<ObjectContext 0x#{obj_id_hex}>"
+    end
+  end
 end

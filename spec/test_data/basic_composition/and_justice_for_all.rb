@@ -4,6 +4,10 @@ class AndJusticeForAll
   attr_reader :init_time_object_context
 
   def initialize
-    @init_time_object_context = object_context
+    @init_time_object_context = begin 
+                                  object_context
+                                rescue
+                                  nil
+                                end
   end
 end

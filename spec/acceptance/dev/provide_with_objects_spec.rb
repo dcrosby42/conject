@@ -24,6 +24,7 @@ describe "lazy dependency resolution via provide_with_objects" do
   describe "mixed lazy and construct with"
   describe "provide SELF with objects"
   describe "objects injected into context after construction"
+  describe "module-relative dep names"
 
 end
 

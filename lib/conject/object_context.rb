@@ -10,6 +10,12 @@ module Conject
 
     # Inject a named object into this context
     def put(name, object)
+      class << object
+        def object_context
+          @_conject_object_context
+        end
+      end
+      object.instance_variable_set(:@_conject_object_context, self)
       @cache[name.to_sym] = object
     end
 

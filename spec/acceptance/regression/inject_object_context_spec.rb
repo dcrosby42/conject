@@ -5,8 +5,9 @@ describe "object referencing its own context" do
 
   before do
     append_test_load_path "basic_composition"
-    require 'master_of_puppets'
+    require 'kill_em_all'
     require 'ride_the_lightning'
+    require 'master_of_puppets'
     require 'and_justice_for_all'
   end
 
@@ -27,7 +28,7 @@ describe "object referencing its own context" do
 
   describe "NEW AND IMPROVED" do
 
-    describe "classes with object definitions" do
+    describe "classes using construct_with" do
       let(:justice) { subject.get('and_justice_for_all') }
       let(:ride) { subject.get('ride_the_lightning') }
 
@@ -40,9 +41,23 @@ describe "object referencing its own context" do
         justice.init_time_object_context.should == subject
         ride.init_time_object_context.should == subject # watching out for interaction bugs wrt dependency construction
       end
+
+      it "will get object_context assigned as a result of being set into a context" do
+        obj = AndJusticeForAll.new(ride_the_lightning: 'doesnt matter')
+        context_before = begin
+                           obj.send(:object_context)
+                         rescue
+                           nil
+                         end
+        context_before.should be_nil
+
+        c2 = new_object_context
+        c2[:my_obj] = obj
+        obj.send(:object_context).should == c2
+      end
     end
 
-    describe "classes WITHOUT object definitions" do
+    describe "classes NOT using construct_with" do
       let(:ride) { subject.get('ride_the_lightning') }
 
       it "automatically get a private accessor for object_context, even if not requested" do
@@ -51,6 +66,15 @@ describe "object referencing its own context" do
 
       it "can use object_context in initialize" do
         ride.init_time_object_context.should == subject
+      end
+
+      it "will get object_context assigned as a result of being set into a context" do
+        obj = KillEmAll.new
+        lambda do obj.send(:object_context) end.should raise_error
+
+        c2 = new_object_context
+        c2[:my_obj] = obj
+        obj.send(:object_context).should == c2
       end
     end
 

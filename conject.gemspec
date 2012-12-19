@@ -9,7 +9,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = "https://github.com/dcrosby42/conject"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  gem.files         = `git ls-files`.split("\n")
+  gem.files         = `git ls-files`.split("\n") - [".gitignore", ".rspec", ".rvmrc", "NOTES.txt", "TODO"]
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = "conject"
   gem.require_paths = ["lib"]

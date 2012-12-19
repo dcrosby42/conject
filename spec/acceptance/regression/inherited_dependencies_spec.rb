@@ -81,7 +81,7 @@ describe "basic inheritance" do
         it "invokes subclass custom #initialize with component map" do
           fur = subject[:fur]
           tree = subject[:tree]
-          chauncy.got_map.should == { fur: fur, tree: tree }
+          chauncy.got_map.should == { :fur => fur, :tree => tree }
         end
 
         it "invokes superclass #initialize" do
@@ -150,7 +150,7 @@ describe "basic inheritance" do
       class Shell; end
 
       it "invokes super #initialize with component map" do
-        subject[:reptile].super_map.should == { scales: subject[:scales] }
+        subject[:reptile].super_map.should == { :scales => subject[:scales] }
       end
 
       context "subclass has default #initialize" do
@@ -159,7 +159,7 @@ describe "basic inheritance" do
         end
 
         it "invokes superclass #initialize" do
-          subject[:reptile].super_map.should == { scales: subject[:scales] }
+          subject[:reptile].super_map.should == { :scales => subject[:scales] }
         end
       end
 
@@ -178,13 +178,13 @@ describe "basic inheritance" do
         it "invokes subclass custom #initialize with component map" do
           scales = subject[:scales]
           rock = subject[:rock]
-          harry.got_map.should == { scales: scales, rock: rock }
+          harry.got_map.should == { :scales => scales, :rock => rock }
         end
 
         it "invokes superclass #initialize with component_map" do
           scales = subject[:scales]
           rock = subject[:rock]
-          harry.super_map.should == { scales: scales, rock: rock }
+          harry.super_map.should == { :scales => scales, :rock => rock }
         end
       end
 
@@ -239,7 +239,7 @@ describe "basic inheritance" do
 
         it "does not invoke superclass #initiailize" do
           subject[:croc].super_map.should be_nil
-          subject[:croc].my_map.should == { scales: subject[:scales] }
+          subject[:croc].my_map.should == { :scales => subject[:scales] }
         end
 
       end

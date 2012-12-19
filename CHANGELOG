@@ -1,3 +1,14 @@
+Conject v0.1.0
+  * All objects now have a public accessor object_context
+	* provide_with_objects can be used like construct_with, except it sets up lazy use-time resolution of dependencies
+	* ObjectContext#put now raises if you accidentally re-register an object with the same name
+
+Conject v0.0.9
+  * Classes with module namespaces can now refer to collaborators in construct_with by omitting the full path corresponding to the object namespace
+
+Conject v0.0.8
+  * peer_objects lets you declare within one object that if some subcontext should request an object, that object should be instantiated in THIS context
+
 Conject v0.0.7
   (re-release due to release automation fail on my part)
 Conject v0.0.6

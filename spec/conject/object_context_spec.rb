@@ -87,6 +87,18 @@ describe Conject::ObjectContext do
     end
   end
 
+  describe "#put?" do
+    it "raises an error if the context already has an object with the given name" do
+      subject[:jack] = :sparrow
+      lambda do subject[:jack] = :and_jill end.should raise_error /jack/
+    end
+
+    it "raises an error if the context has a config for the given name, even if no object has been instantiated or registered yet" do
+      subject.configure_objects davie: { cache: false }
+      lambda do subject[:davie] = :jones end.should raise_error /davie/
+    end
+  end
+
   describe "#has?" do
     describe "when the object exists in the cache" do
       describe "due to #put" do

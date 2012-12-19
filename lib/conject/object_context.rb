@@ -10,6 +10,7 @@ module Conject
 
     # Inject a named object into this context
     def put(name, object)
+      raise "This ObjectContext already has an instance or configuration for '#{name.to_s}'" if directly_has?(name)
       Conject.install_object_context(object, self)
       @cache[name.to_sym] = object
     end

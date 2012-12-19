@@ -18,14 +18,6 @@ module Conject
         else
           raise "Constructor lambda takes 0, 1 or 2 params; this lambda takes #{lambda_constructor.arity}"
         end
-
-        # Provide a private accessor to the assigned object context
-        class << object
-          private
-          def object_context
-            @_conject_object_context #|| Conject.default_object_context
-          end
-        end
       else
         object = type_1_constructor(name, object_context)
       end
@@ -50,11 +42,6 @@ module Conject
         anchor_object_peers object_context, klass.object_peers
       end
 
-      # Provide a private accessor to the assigned object context
-      klass.class_def_private :object_context do
-        @_conject_object_context || Thread.current[:current_object_context] #|| Conject.default_object_context
-      end
-
       constructor_func = nil
       if klass.has_object_definition?
         object_map = dependency_resolver.resolve_for_class(klass, object_context)
@@ -63,26 +50,15 @@ module Conject
       elsif Utilities.has_zero_arg_constructor?(klass)
         # Default construction
         constructor_func = lambda do klass.new end
-        Thread.current[:current_object_context] = object_context
-        begin
-        ensure
-          Thread.current[:current_object_context] = nil
-        end
       else
         # Oops, out of ideas on how to build.
         raise ArgumentError.new("Class #{klass} has no special component needs, but neither does it have a zero-argument constructor.");
       end
 
       object = nil
-      Thread.current[:current_object_context] = object_context
-      begin 
+      Conject.override_object_context_with object_context do
         object = constructor_func.call
-      ensure
-        Thread.current[:current_object_context] = nil
       end
-
-      return object
-
     end
 
     def anchor_object_peers(object_context, object_peers)

@@ -8,6 +8,7 @@ describe "lazy dependency resolution via provide_with_objects" do
     require 'hobbit/baggins'
     require 'hobbit/shire'
     require 'hobbit/precious'
+    require 'hobbit/smeagol'
   end
 
   after do
@@ -18,6 +19,11 @@ describe "lazy dependency resolution via provide_with_objects" do
     it "provides objects" do
       baggins = subject["hobbit/baggins"]
       baggins.to_s.should == "From the Shire, found the One Ring"
+    end
+
+    it "can use deps inside #initialize" do
+      gollum = subject["hobbit/smeagol"]
+      gollum.saying.should == "They stole it from us, precious One Ring"
     end
   end
 

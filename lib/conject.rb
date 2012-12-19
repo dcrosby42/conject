@@ -2,6 +2,8 @@ require "conject/version"
 
 require 'conject/object_definition'
 require 'conject/extended_metaid'
+require 'conject/class_ext_object_context'
+require 'conject/object_ext_object_context'
 require 'conject/class_ext_construct_with'
 require 'conject/class_ext_object_peers'
 require 'conject/class_ext_provide_with_objects'
@@ -37,5 +39,18 @@ module Conject
       :parent_context => parent_context,
       :object_factory => object_factory
     )
+  end
+
+  def self.install_object_context(target, context)
+    target.instance_variable_set(:@_conject_object_context, context)
+  end
+
+  def self.override_object_context_with(object_context, &block)
+    Thread.current[:_overriding_conject_object_context] = object_context
+    begin
+      block.call
+    ensure
+      Thread.current[:_overriding_conject_object_context] = nil
+    end
   end
 end

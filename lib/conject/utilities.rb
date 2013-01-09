@@ -6,8 +6,9 @@ module Conject
         init_arity == 0 or (RUBY_VERSION <= "1.9.2" and init_arity == -1)
       end
 
-      def generate_accessor_method_name(object_name)
-        object_name.to_s.split("/").last.to_sym
+      def generate_accessor_method_names(object_name)
+        parts = object_name.to_s.split("/").reject do |x| x == "" end
+        [ parts.join("_").to_sym, parts.last.to_sym ].uniq
       end
     end
   end

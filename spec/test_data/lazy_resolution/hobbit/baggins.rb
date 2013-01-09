@@ -5,5 +5,6 @@ module Hobbit
     def to_s
       "From the #{shire}, found the #{precious}"
     end
+
   end
 end

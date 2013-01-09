@@ -21,6 +21,14 @@ describe "lazy dependency resolution via provide_with_objects" do
       baggins.to_s.should == "From the Shire, found the One Ring"
     end
 
+    it "includes both the convenient, short-hand object name in addition to the canonical" do
+      baggins = subject["hobbit/baggins"]
+      baggins.send(:shire).to_s.should == "Shire"
+      baggins.send(:hobbit_shire).to_s.should == "Shire"
+      baggins.send(:precious).to_s.should == "One Ring"
+      baggins.send(:hobbit_precious).to_s.should == "One Ring"
+    end
+
     it "can use deps inside #initialize" do
       gollum = subject["hobbit/smeagol"]
       gollum.saying.should == "They stole it from us, precious One Ring"

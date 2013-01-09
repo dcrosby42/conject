@@ -33,6 +33,20 @@ describe "module scoping" do
       obj.should_not be_nil
       obj.class.should == Chart::Presenter
 
+      model = obj.send(:chart_model)
+      model.should be
+      model.class.should == Chart::Model
+
+      view = obj.send(:chart_view)
+      view.should be
+      view.class.should == Chart::View
+    end
+
+    it "provides short (relative) object name accessors in addition to canonical accessors" do
+      obj = subject.get('chart/presenter')
+      obj.should_not be_nil
+      obj.class.should == Chart::Presenter
+
       model = obj.send(:model)
       model.should be
       model.class.should == Chart::Model

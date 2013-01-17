@@ -113,6 +113,20 @@ describe Conject::ObjectFactory do
           lambda do subject.construct_new(:the_two_many_params, object_context) end.should raise_error(/constructor lambda takes 0, 1 or 2 params/i)
         end
       end
+    end
+
+    describe "'is' aliasing" do
+      let(:object_config) do { :is => :specific_object  } end
+      let(:specific_object) do "the specific object" end
+      
+      before do
+        object_context.should_receive(:get_object_config).with(:generic_object).and_return(object_config)
+        object_context.should_receive(:get).with(:specific_object).and_return(specific_object)
+      end
+
+      it "specifies that the configured object should be 'built' by pulling its target object from the object context" do
+        subject.construct_new(:generic_object, object_context).should == specific_object
+      end
 
     end
   end

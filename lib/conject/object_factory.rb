@@ -7,7 +7,14 @@ module Conject
       object = nil
       config = object_context.get_object_config(name)
       lambda_constructor = config[:construct]
-      if lambda_constructor
+      alias_for = config[:is]
+      if alias_for
+        begin
+          object = object_context.get(alias_for)
+        rescue Exception => ex
+          raise "(When attempting to fill alias '#{name}' with actual object '#{alias_for}') #{ex.message}"
+        end
+      elsif lambda_constructor
         case lambda_constructor.arity
         when 0
           object = lambda_constructor[]

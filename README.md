@@ -90,4 +90,17 @@ subcontexts thereof.  It also means that they will be preferred over any objects
 All classes built within an ObjectContext are able to reference the context directly via the private accessor method "#object_context", which 
 is available as early as the call to #initialize.
 
+# Aliasing #
+The following will cause one object to be fulfilled by another.  In this case, 'album' is not expected to be built
+as an instance of the Album class, but rather will be set up as another name for 'and_justice_for_all':
+
+    context.configure_objects album: { is: 'and_justice_for_all' }
+
+Both 'album' and 'and_justice_for_all' will be built in the context when 'album' is first requested.
+This is more or less expressive shorthand for:
+
+    context['album'] = context['and_justice_for_all'] 
+
+...EXCEPT that it's a lazy approach: using 'is' means nothing actually gets built or set in the context before it
+is requested or composed into another object.
 

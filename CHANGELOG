@@ -1,3 +1,5 @@
+Conject v0.1.2
+  * Aliasing objects via 'is', eg: context.configure_objects album: { is: "and_justice_for_all" }
 Conject v0.1.1
   * canonical private accessors for module-scoped object
 

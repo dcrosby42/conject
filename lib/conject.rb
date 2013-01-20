@@ -13,7 +13,6 @@ require 'conject/class_finder'
 require 'conject/dependency_resolver'
 require 'conject/utilities'
 require 'conject/composition_error'
-require 'conject/borrowed_active_support_inflector'
 
 module Conject
   #

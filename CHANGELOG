@@ -1,3 +1,6 @@
+Conject v0.1.4
+  * Removed Conject::BorroredInflector, moved copies of the underscore and camelize functions into Conject::Utilities
+
 Conject v0.1.3
   * Changed the way Class.construct_with rewrites Class.new().  It is now safe to re-load the source code of a class that uses construct_with.
 

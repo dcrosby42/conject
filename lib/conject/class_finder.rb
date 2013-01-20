@@ -2,7 +2,7 @@
 module Conject
   class ClassFinder
     def find_class(name)
-      cname = name.to_s.camelize
+      cname = Utilities.camelize(name.to_s)
       cname_components = cname.split("::")
       dig_for_class Object, cname_components
     end
@@ -12,7 +12,7 @@ module Conject
       return nil unless cname =~ /::/
       cname_components = cname.split("::")
       cname_components.pop
-      cname_components.join("::").underscore
+      Utilities.underscore(cname_components.join("::"))
     end
 
     private

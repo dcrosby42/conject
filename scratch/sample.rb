@@ -53,7 +53,7 @@ class ObjectBuilder
   end
 
   def find_or_generate_producer(object_name)
-    c = Object.const_get(object_name.to_s.camelize)
+    c = Object.const_get(Conject::Utilities.camelize(object_name.to_s))
     if c
       return SimpleBuilder.new(c)
     end

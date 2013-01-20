@@ -1,6 +1,8 @@
 ISSUE 2012-04-25: construct_with cyclic dependency checking!  Eg. Presenter construc_with :presenter -> stack overlow
 ISSUE 2012-04-30: prevent #put for already-existant objects
 ISSUE 2012-04-30: prevent #configure_object(s) for already-existant objects
+ISSUE 2013-01-20: Better error handling in ObjectFactory when .new fails! see below
+ISSUE 2013-01-20: Use __send__ instead of send; it brokes. (class_ext_construct_with)
 
 Features:
   customer construction lambda via configure_objects
@@ -8,8 +10,6 @@ Features:
   Class singletons:
     use_class_in_context
     class_depends_on
-
-  context.configure( :use_class_singletons => true)
 
   ObjectContext#no_cache? <- reimplement for recursive upward search of object configs
 
@@ -23,6 +23,17 @@ Features:
 Tasks:
   GET GOING IN TRAVIS CI
 
-  Cleanup meta programming in .construct_with it's NASTY
 
 
+
+
+ISSUE 2013-01-20: Better error handling in ObjectFactory when .new fails, like this:
+ObjectFactory line 66:
+      Conject.override_object_context_with object_context do
+        begin
+          object = constructor_func.call
+        rescue Exception => e
+          origin = "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+          raise "Error while constructing object '#{name}' of class #{klass}: #{origin}"
+        end
+      end

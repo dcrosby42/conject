@@ -72,7 +72,7 @@ describe "basic inheritance" do
           attr_accessor :got_map
           def initialize(map)
             @got_map = map
-            super
+            super() # YOU GOTTA USE PARENS LIKE THIS TO INDICATE THAT YOU DON'T INTEND TO PASS ARGS TO SUPER CONSTRUCTOR
           end
         end
 
@@ -95,7 +95,7 @@ describe "basic inheritance" do
           attr_accessor :legs
           def initialize
             @legs = 4
-            super :whoa_there # superclass has a Conjected #initialize which requires the component map arg, though it's not used.  Ugh.
+            super 
           end
         end
         

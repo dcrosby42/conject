@@ -78,63 +78,30 @@ class Class
     end
     klass.meta_eval do private :object_context_prep end
     
-    unless klass.methods.include?(:actual_new) # only do this once per family tree (subclasses will inherit the Conjected .new)
-      # Alias :new such that we can wrap and invoke it later
-      klass.meta_eval do 
-        alias_method :actual_new, :new
+    klass.meta_def :new do |component_map|
+      obj = allocate
+      if has_object_definition?
+        # Apply the given components
+        obj.send(:set_components, component_map)
+      else
+        raise "#{self.class} has an ancestor that uses construct_with, but has not declared any component dependencies.  Will not be able to instantiate!"
       end
 
-      # Override default :new behavior for this class.
-      #
-      # The .new method is rewritten to accept a single argument:
-      #   component_map: a Hash containing all required objects to construct a new instance.
-      #                  Keys are expected to be symbols.
-      # 
-      # If user defines their own #initialize method, all components sent into .new
-      # will be installed BEFORE the user-defined #initialize, and it may accept arguments thusly:
-      # * zero args.  Nothing will be passed to #initialize
-      # * single arg. The component_map will be passed.
-      # * var args (eg, def initialize(*args)).  args[0] will be the component map.  NO OTHER ARGS WILL BE PASSED. See Footnote a)
-      #
-      klass.meta_def :new do |component_map|
-        # We only want to do the following one time, but we've waited until now
-        # in order to make sure our metaprogramming didn't get ahead of the user's
-        # own definition of initialize:
-        unless object_context_prep[:initialize_has_been_wrapped]
-          # Define a new wrapper'd version of initialize that accepts and uses a component map
-          init_alias = "original_#{self.name}_initialize".to_sym
-          alias_method init_alias, :initialize
-          class_def :initialize do |component_map|
-            if self.class.has_object_definition?
-              # Apply the given components
-              set_components component_map
-            else
-              raise "#{self.class} has an ancestor that uses construct_with, but has not declared any component dependencies.  Will not be able to instantiate!"
-            end
+      arg_count = obj.method(:initialize).arity
+      case arg_count
+      when 0
+        obj.send :initialize
 
-            # Invoke the normal initialize method.
-            # User-defined initialize method may accept 0 args, or it may accept a single arg
-            # which will be the component map.
-            arg_count = method(init_alias).arity
-            case arg_count
-            when 0
-              self.send init_alias
+      when 1, -1  # See Footnote a) at the bottom of this file
+        obj.send :initialize, component_map
 
-            when 1, -1  # See Footnote a) at the bottom of this file
-              self.send init_alias, component_map
-
-            else
-              # We're not equipped to handle this
-              raise "User-defined initialize method defined with #{arg_count} parameters; must either be 0, other wise 1 or -1 (varargs) to receive the component map."
-            end
-          end
-          # Make a note that the initialize wrapper has been applied
-          object_context_prep[:initialize_has_been_wrapped] = true
-        end
-
-        # Instantiate an instance
-        actual_new component_map 
+      else
+        # We're not equipped to handle this
+        raise "User-defined initialize method defined with #{arg_count} parameters; must either be 0, other wise 1 or -1 (varargs) to receive the component map."
       end
+
+      obj
+      
     end
   end
 

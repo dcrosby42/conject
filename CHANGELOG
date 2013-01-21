@@ -1,3 +1,7 @@
+Conject v0.1.5
+  * Using __send__ instead of send.  This avoids collisions with actual methods on target objects named "send"
+	* Added a more descriptive error handler when a constructor call fails in ObjectFactory
+
 Conject v0.1.4
   * Removed Conject::BorroredInflector, moved copies of the underscore and camelize functions into Conject::Utilities
 

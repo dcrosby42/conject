@@ -82,7 +82,7 @@ class Class
       obj = allocate
       if has_object_definition?
         # Apply the given components
-        obj.send(:set_components, component_map)
+        obj.__send__(:set_components, component_map)
       else
         raise "#{self.class} has an ancestor that uses construct_with, but has not declared any component dependencies.  Will not be able to instantiate!"
       end
@@ -90,10 +90,10 @@ class Class
       arg_count = obj.method(:initialize).arity
       case arg_count
       when 0
-        obj.send :initialize
+        obj.__send__ :initialize
 
       when 1, -1  # See Footnote a) at the bottom of this file
-        obj.send :initialize, component_map
+        obj.__send__ :initialize, component_map
 
       else
         # We're not equipped to handle this

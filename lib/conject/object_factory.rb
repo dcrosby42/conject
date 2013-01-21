@@ -30,7 +30,7 @@ module Conject
       end
 
       # Stuff an internal back reference to the object context into the new object:
-      object.send(:instance_variable_set, :@_conject_object_context, object_context)
+      object.__send__(:instance_variable_set, :@_conject_object_context, object_context)
 
       return object
     end

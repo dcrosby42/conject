@@ -64,7 +64,12 @@ module Conject
 
       object = nil
       Conject.override_object_context_with object_context do
-        object = constructor_func.call
+        begin
+          object = constructor_func.call
+        rescue Exception => ex
+          origin = "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+          raise "Error while constructing object '#{name}' of class #{klass}: #{origin}"
+        end
       end
     end
 

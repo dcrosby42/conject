@@ -12,6 +12,7 @@ module Conject
     def put(name, object)
       raise "This ObjectContext already has an instance or configuration for '#{name.to_s}'" if directly_has?(name)
       Conject.install_object_context(object, self)
+      object.instance_variable_set(:@_conject_contextual_name, name.to_s)
       @cache[name.to_sym] = object
     end
 
@@ -29,6 +30,7 @@ module Conject
         return parent_context.get(name)
       else
         object = object_factory.construct_new(name,self)
+        object.instance_variable_set(:@_conject_contextual_name, name.to_s)
         @cache[name] = object unless no_cache?(name)
         return object
       end

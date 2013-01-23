@@ -13,6 +13,8 @@ describe "object_context:" do
 
   after do
     restore_load_path
+    42.instance_variable_set(:@_conject_object_context, nil)
+    42.instance_variable_set(:@_conject_contextual_name, nil)
   end
 
   describe "NEW AND IMPROVED" do

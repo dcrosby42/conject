@@ -78,7 +78,7 @@ object peers within the class definition of that owner object.  This ensures tha
 objects to be instantiated in those subcontexts as well. 
 
     class Game
-      peer_objects :missile_coordinator, :wind_affector
+      object_peers: :missile_coordinator, :wind_affector
     end
 
 In this example, the instantiation of a Game instance in an object context will cause missile coordinator and wind affector to be "anchored"

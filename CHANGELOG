@@ -25,7 +25,7 @@ Conject v0.0.9
   * Classes with module namespaces can now refer to collaborators in construct_with by omitting the full path corresponding to the object namespace
 
 Conject v0.0.8
-  * peer_objects lets you declare within one object that if some subcontext should request an object, that object should be instantiated in THIS context
+  * object_peers lets you declare within one object that if some subcontext should request an object, that object should be instantiated in THIS context
 
 Conject v0.0.7
   (re-release due to release automation fail on my part)

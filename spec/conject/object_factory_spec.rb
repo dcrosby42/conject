@@ -67,6 +67,17 @@ describe Conject::ObjectFactory do
             subject.construct_new(my_object_name, object_context)
           end.should raise_error(ArgumentError)
         end
+
+      end
+
+      describe "when target constructor raises an error" do
+        it "re-raises with an explanation" do
+          my_object_class.stub(:has_object_definition?).and_return false
+          my_object_class.should_receive(:new).and_raise("BOOM")
+          lambda do
+            subject.construct_new(my_object_name, object_context)
+          end.should raise_error(/Error while constructing object '#{my_object_name}'.*BOOM/)
+        end
       end
     end
 

@@ -67,7 +67,7 @@ module Conject
         begin
           object = constructor_func.call
         rescue Exception => ex
-          origin = "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
+          origin = "#{ex.message}\n\t#{ex.backtrace.join("\n\t")}"
           raise "Error while constructing object '#{name}' of class #{klass}: #{origin}"
         end
       end

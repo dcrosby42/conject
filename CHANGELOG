@@ -1,3 +1,6 @@
+Conject v0.1.7
+  * Fixed a bug in the error handler that catches exceptions in object constructors
+
 Conject v0.1.6
   * Object#contextual_name provides the string name of an object as it is keyed in its context
 

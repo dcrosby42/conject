@@ -104,3 +104,26 @@ This is more or less expressive shorthand for:
 ...EXCEPT that it's a lazy approach: using 'is' means nothing actually gets built or set in the context before it
 is requested or composed into another object.
 
+# Specialization via Composition#
+
+To declare objects as instances of a specific class, you may specify the :class of the object via #configure_objects.
+Furthermore, you can specialize the instance by indicating which specific objects you would like to supply as the object's collaborators:
+
+    context.configure_objects({
+      adventure_time: {
+        class: Team, 
+        specialize: { 
+          hero: "finn",
+          sidekick: "jake" }},
+      dark_knight: {
+        class: Team,
+        specialize: {
+          hero: "batman",
+          sidekick: "robin" }}
+    })
+
+The keys in :specialize match some or all of the keys defined in the class (in this case, the Team class is defined to be #construct_with :hero, :sidekick, :clock.
+The values are object names within the ObjectContext; they will be resolved in the usual manner.
+Components that a Class wants to be built with, but which you omit from the :specialize Hash, will be resolved in the usual way.
+
+Using :class and :specialize is NOT THE SAME as building objects within a subcontext.  Objects mentioned here are expected to be found and kept within the defining ObjectContext.

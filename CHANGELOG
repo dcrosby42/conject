@@ -1,4 +1,5 @@
 Conject v0.1.7
+  * Added :class and :specialize object configurations
   * Fixed a bug in the error handler that catches exceptions in object constructors
 
 Conject v0.1.6

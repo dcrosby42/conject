@@ -5,35 +5,34 @@ ISSUE 2013-01-20: Better error handling in ObjectFactory when .new fails! see be
 ISSUE 2013-01-20: Use __send__ instead of send; it brokes. (class_ext_construct_with)
 
 Features:
-  customer construction lambda via configure_objects
+  Provide option in ObjectContext to disable automatic building of dependencies.
+    Ie, if a dependency doesn't already exist in this context or any parent, raise an error.
+    This would help when using contexts in unit tests where you want tests to fail when someone sneaks new deps into a class (otherwise, Conject will just build you a real one and let er rip)
+    This implies some refactoring of ObjectContext and ObjectFactory
+      NOTES:
+        - object_factory.rb line 41 installs the object context into the newly built object: 1) use Conject.install_object_context, and 2) move this into ObjectContext around line 34.
+        - redesign ObjectFactory to be a chain of potential object generators, where each one considers the object config and decides whether or not to produce.
+          The default chain looks like this: [ Alias | Lambda | Specified Class | Classic Auto Construction ]
+        - Move ObjectFactory#type_1_constructor and #anchor_object_peers into their own class; is common between the last two object producers 
+        - provide mechanism to reconfigure the object producer chain
+          - reorder
+          - remove some / all
+          - add stock
+          - add custom, either an object or a function ?
+          - provide a "mock" generator, such that new mock objects are produced based on the requested name?
 
   Class singletons:
     use_class_in_context
     class_depends_on
 
   ObjectContext#no_cache? <- reimplement for recursive upward search of object configs
+    (Feb 15 2013: I don't remember what this note means)
 
   contexts can accept configurations targeted at named subcontext
 
-  Support classes namespaced to modules
-
   Conject.new_object_context (support no-args, default parent context to nil)
-
 
 Tasks:
   GET GOING IN TRAVIS CI
 
 
-
-
-
-ISSUE 2013-01-20: Better error handling in ObjectFactory when .new fails, like this:
-ObjectFactory line 66:
-      Conject.override_object_context_with object_context do
-        begin
-          object = constructor_func.call
-        rescue Exception => e
-          origin = "#{e.message}\n\t#{e.backtrace.join("\n\t")}"
-          raise "Error while constructing object '#{name}' of class #{klass}: #{origin}"
-        end
-      end

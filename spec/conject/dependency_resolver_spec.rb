@@ -10,7 +10,7 @@ describe Conject::DependencyResolver do
       @objects = objects
     end
     def get(name)
-      @objects[name]
+      @objects[name.to_sym] || @object[name.to_s]
     end
   end
 
@@ -20,7 +20,7 @@ describe Conject::DependencyResolver do
     end
   end
 
-  let :oc_objects do { cow: "the cow", dog: "the dog" } end
+  let :oc_objects do { cow: "the cow", dog: "the dog", bessy: "the bessy", rover: "the rover" } end
 
   let :object_context do StubbedObjectContext.new(oc_objects) end
 
@@ -37,6 +37,22 @@ describe Conject::DependencyResolver do
     }
   end
 
+  it "uses optional remapping to look for different object names" do
+    remapping = {dog: :rover}
+    subject.resolve_for_class(klass, object_context, remapping).should == {
+      cow: "the cow",
+      dog: "the rover"
+    }
+  end
+
+  it "optional remapping is string/symbol insensitive" do
+    remapping = {dog: "rover", cow: :bessy}
+    subject.resolve_for_class(klass, object_context, remapping).should == {
+      cow: "the bessy",
+      dog: "the rover"
+    }
+  end
+
   describe "when the class is in a module" do
     before do
       class_finder.stub(:get_module_path).with(klass).and_return("a/module/path")
@@ -50,8 +66,6 @@ describe Conject::DependencyResolver do
         dog: "the relative dog",
       }
     end
-
-
   end
 end
 

@@ -9,9 +9,10 @@ module Conject
     # This method assumes the Class has_object_defintion?  (Client code should
     # determine that before invoking this method.)
     #
-    def resolve_for_class(klass, object_context)
+    def resolve_for_class(klass, object_context, remapping=nil)
+      remapping ||= {}
       klass.object_definition.component_names.inject({}) do |obj_map, name|
-        obj_map[name] = search_for(klass, object_context, name)
+        obj_map[name] = search_for(klass, object_context, remapping[name.to_sym] || remapping[name.to_s] || name)
         obj_map
       end
     end

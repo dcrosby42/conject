@@ -8,12 +8,16 @@ module Conject
       config = object_context.get_object_config(name)
       lambda_constructor = config[:construct]
       alias_for = config[:is]
+      klass = config[:class]
+      raise "#{klass.inspect} is not a Class" if klass and !(Class === klass)
       if alias_for
+        # This object is defined as simply being another name for a different object
         begin
           object = object_context.get(alias_for)
         rescue Exception => ex
           raise "(When attempting to fill alias '#{name}' with actual object '#{alias_for}') #{ex.message}"
         end
+
       elsif lambda_constructor
         case lambda_constructor.arity
         when 0
@@ -25,8 +29,12 @@ module Conject
         else
           raise "Constructor lambda takes 0, 1 or 2 params; this lambda takes #{lambda_constructor.arity}"
         end
+
+      elsif klass
+        # This object has a specified class
+        object = type_1_constructor(klass, name, object_context, config[:specialize]) # Specify class 
       else
-        object = type_1_constructor(name, object_context)
+        object = type_1_constructor(nil, name, object_context, config[:specialize]) # Let class be determined by name
       end
 
       # Stuff an internal back reference to the object context into the new object:
@@ -42,8 +50,8 @@ module Conject
     #  - Assume we're looking for a class to create an instance with
     #  - it may or may not have a declared list of named objects it needs to be constructed with
     #
-    def type_1_constructor(name, object_context)
-      klass = class_finder.find_class(name)
+    def type_1_constructor(klass, name, object_context, overrides=nil)
+      klass ||= class_finder.find_class(name)
 
       if !klass.object_peers.empty?
         anchor_object_peers object_context, klass.object_peers
@@ -51,7 +59,7 @@ module Conject
 
       constructor_func = nil
       if klass.has_object_definition?
-        object_map = dependency_resolver.resolve_for_class(klass, object_context)
+        object_map = dependency_resolver.resolve_for_class(klass, object_context, overrides)
         constructor_func = lambda do klass.new(object_map) end
 
       elsif Utilities.has_zero_arg_constructor?(klass)
@@ -68,6 +76,7 @@ module Conject
           object = constructor_func.call
         rescue Exception => ex
           origin = "#{ex.message}\n\t#{ex.backtrace.join("\n\t")}"
+          name ||= "(no name)"
           raise "Error while constructing object '#{name}' of class #{klass}: #{origin}"
         end
       end

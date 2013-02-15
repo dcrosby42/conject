@@ -17,18 +17,18 @@ describe Conject::ObjectFactory do
 
   let :object_context do mock(:object_context) end
 
-  let :my_object_class do mock(:my_object_class) end
+  let :my_object_class do Class.new end
   let :my_object do mock(:my_object) end
   let :my_objects_components do mock(:my_objects_components) end
 
   describe "#construct_new" do
     describe "for Type 1 object construction" do
+      let(:object_config) do {} end
       before do
-        object_context.stub(:get_object_config).and_return({})
+        object_context.stub(:get_object_config).and_return(object_config)
         my_object_class.stub(:class_def_private) # the effect of this is tested in acceptance tests
         my_object_class.stub(:object_peers).and_return([]) # the effect of this is tested in acceptance tests
 
-        class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
         Conject::Utilities.stub(:has_zero_arg_constructor?).and_return true
       end
 
@@ -36,18 +36,58 @@ describe Conject::ObjectFactory do
         before do
           my_object_class.should_receive(:has_object_definition?).and_return true
         end
+        describe "and no specialization has been made" do
+          before do class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class end
+          it "finds the object definition, pulls its deps, and instantiates a new instance" do
+            dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context, nil).and_return my_objects_components
+            my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
 
-        it "finds the object definition, pulls its deps, and instantiates a new instance" do
-          dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context).and_return my_objects_components
-          my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
-
-          subject.construct_new(my_object_name, object_context).should == my_object
+            subject.construct_new(my_object_name, object_context).should == my_object
+          end
         end
+
+        describe "when specialization is provided" do
+          let(:overrides) do { remapped: "names" } end
+          let(:object_config) do { :class => my_object_class, :specialize => overrides } end
+
+          before do
+            class_finder.should_not_receive(:find_class)#.with(my_object_name).and_return my_object_class
+          end
+
+          it "uses the specified class and remapped objects to reolve and build the object" do
+            dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context, overrides).and_return my_objects_components
+            my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
+            subject.construct_new(my_object_name, object_context).should == my_object
+          end
+        end
+
+        describe "when :class is configured" do
+          let(:object_config) do { :class => my_object_class } end
+
+          before do
+            class_finder.should_not_receive(:find_class)#.with(my_object_name).and_return my_object_class
+          end
+
+          it "uses the specified class to build the object" do
+            dependency_resolver.should_receive(:resolve_for_class).with(my_object_class, object_context, nil).and_return my_objects_components
+            my_object_class.should_receive(:new).with(my_objects_components).and_return(my_object)
+            subject.construct_new(my_object_name, object_context).should == my_object
+          end
+
+        end
+        
       end
+        describe "when :class is not a Class" do
+          let(:object_config) do { :class => "Oops! not a Class" } end
+          it "raises" do
+            lambda do subject.construct_new(my_object_name, object_context) end.should raise_error(/is not a Class/)
+          end
+        end
 
       describe "when target class has no object definition" do
         before do
           my_object_class.should_receive(:has_object_definition?).and_return false
+          class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
         end
 
         it "creates a new instance of the class without any arguments" do
@@ -60,6 +100,7 @@ describe Conject::ObjectFactory do
         before do
           my_object_class.should_receive(:has_object_definition?).and_return false
           Conject::Utilities.stub(:has_zero_arg_constructor?).and_return false
+          class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
         end
 
         it "raises a CompositionError" do
@@ -72,6 +113,7 @@ describe Conject::ObjectFactory do
 
       describe "when target constructor raises an error" do
         it "re-raises with an explanation" do
+          class_finder.should_receive(:find_class).with(my_object_name).and_return my_object_class
           my_object_class.stub(:has_object_definition?).and_return false
           my_object_class.should_receive(:new).and_raise("BOOM")
           lambda do
@@ -80,6 +122,8 @@ describe Conject::ObjectFactory do
         end
       end
     end
+
+
 
     describe "for custom lambda construction" do
       let(:object_config) do { :construct => lambda do "The Object" end } end

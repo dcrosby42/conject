@@ -6,29 +6,29 @@ Retrieve and relate objects within contexts.  Provides dependency injection conv
 
 Declare required component objects for a class using .construct_with
 
+```ruby
+require 'conject'
 
-    require 'conject'
+class Wood
+  def to_s; "Wood"; end
+end
 
-    class Wood
-      def to_s; "Wood"; end
-    end
+class Nails
+  def to_s; "Nails"; end
+end
 
-    class Nails
-      def to_s; "Nails"; end
-    end
+class Fence
+  construct_with :wood, :nails
 
-    class Fence
-      construct_with :wood, :nails
+  def to_s
+    "I'm made of #{wood} and #{nails}"
+  end
+end
 
-      def to_s
-        "I'm made of #{wood} and #{nails}"
-      end
-    end
-
-    fence = Conject.default_object_context.get(:fence)
-    puts fence
-    #=> "I'm made of Wood and Nails"
-
+fence = Conject.default_object_context.get(:fence)
+puts fence
+#=> "I'm made of Wood and Nails"
+```
 # Configuring objects #
 
 Call #configure_object or #configure_objects to configure one or more objects wrt
@@ -47,39 +47,43 @@ Eg.
 
 # Modules as namespaces #
 
-    module Chart
-      class Presenter
-        construct_with 'chart/model', 'chart/view'
+```ruby
+module Chart
+  class Presenter
+    construct_with 'chart/model', 'chart/view'
 
-        def to_s
-          "I'm a Chart::Presenter composed of a #{model} and a #{view}"
-        end
-      end
+    def to_s
+      "I'm a Chart::Presenter composed of a #{model} and a #{view}"
     end
-
+  end
+end
+```
 # Subcontexts #
 
-    first_fence = nil
-    second_fence = nil
+```ruby
+first_fence = nil
+second_fence = nil
 
-    Conject.default_object_context.in_subcontext do |sub|
-      first_fence = sub[:fence]
-    end
+Conject.default_object_context.in_subcontext do |sub|
+  first_fence = sub[:fence]
+end
 
-    Conject.default_object_context.in_subcontext do |sub|
-      second_fence = sub[:fence]
-    end
+Conject.default_object_context.in_subcontext do |sub|
+  second_fence = sub[:fence]
+end
 
-    # second_fence != first_fence
-
+# second_fence != first_fence
+```
 If you'd like to ensure that certain dependencies needed by objects built in subcontexts are actually housed in the parent context, but they
 have not necessarily been cached or injected in advance, AND you've got an "owner"-like object living in that context, you can declare 
 object peers within the class definition of that owner object.  This ensures that collaborators in the subcontext will not cause the peer
 objects to be instantiated in those subcontexts as well. 
 
-    class Game
-      object_peers: :missile_coordinator, :wind_affector
-    end
+```ruby
+class Game
+  object_peers: :missile_coordinator, :wind_affector
+end
+```
 
 In this example, the instantiation of a Game instance in an object context will cause missile coordinator and wind affector to be "anchored"
 in the same context as the game instance, meaning they prefer to be instantiated here, if needed by any objects in this same context or any
@@ -94,12 +98,16 @@ is available as early as the call to #initialize.
 The following will cause one object to be fulfilled by another.  In this case, 'album' is not expected to be built
 as an instance of the Album class, but rather will be set up as another name for 'and_justice_for_all':
 
-    context.configure_objects album: { is: 'and_justice_for_all' }
+```ruby
+context.configure_objects album: { is: 'and_justice_for_all' }
+```
 
 Both 'album' and 'and_justice_for_all' will be built in the context when 'album' is first requested.
 This is more or less expressive shorthand for:
 
-    context['album'] = context['and_justice_for_all'] 
+```ruby
+context['album'] = context['and_justice_for_all'] 
+```
 
 ...EXCEPT that it's a lazy approach: using 'is' means nothing actually gets built or set in the context before it
 is requested or composed into another object.
@@ -109,18 +117,20 @@ is requested or composed into another object.
 To declare objects as instances of a specific class, you may specify the :class of the object via #configure_objects.
 Furthermore, you can specialize the instance by indicating which specific objects you would like to supply as the object's collaborators:
 
-    context.configure_objects({
-      adventure_time: {
-        class: Team, 
-        specialize: { 
-          hero: "finn",
-          sidekick: "jake" }},
-      dark_knight: {
-        class: Team,
-        specialize: {
-          hero: "batman",
-          sidekick: "robin" }}
-    })
+```ruby
+context.configure_objects({
+  adventure_time: {
+    class: Team, 
+    specialize: { 
+      hero: "finn",
+      sidekick: "jake" }},
+  dark_knight: {
+    class: Team,
+    specialize: {
+      hero: "batman",
+      sidekick: "robin" }}
+})
+```
 
 The keys in :specialize match some or all of the keys defined in the class (in this case, the Team class is defined to be #construct_with :hero, :sidekick, :clock.
 The values are object names within the ObjectContext; they will be resolved in the usual manner.

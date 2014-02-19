@@ -8,6 +8,8 @@ describe Conject::ClassFinder do
       require 'some_random_class'
       require 'chart/model'
       require 'somewhere/deep/inside/the/earth'
+      require 'showing/no/subject'
+      require 'showing/ancestor'
     end
 
     after do
@@ -49,6 +51,12 @@ describe Conject::ClassFinder do
         c = subject.find_class("somewhere/deep/inside/the/earth")
         c.should_not be_nil
         c.should == Somewhere::Deep::Inside::The::Earth
+      end
+
+      it "does not search for ancestors" do
+        lambda do 
+          subject.find_class("showing/no/showing/ancestor")
+        end.should raise_error(/Could not find class.*/) 
       end
 
       it "raises an error for a misstep along the way" do

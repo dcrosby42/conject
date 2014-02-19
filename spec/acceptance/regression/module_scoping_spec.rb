@@ -10,6 +10,9 @@ describe "module scoping" do
       require 'chart/model'
       require 'chart/presenter'
       require 'chart/view'
+      require 'showing/no/subject'
+      require 'showing/ancestor'
+      require 'showing/no/fear/fear'
     end
 
     after do
@@ -26,6 +29,12 @@ describe "module scoping" do
       obj = subject.get(:'chart/model')
       obj.should_not be_nil
       obj.class.should == Chart::Model
+    end
+
+    it "correctly finds a dependency for modules at different levels" do
+      obj1 = subject.get('showing/no/subject')
+      obj2 = subject.get('showing/no/fear/fear')
+      obj1.send(:ancestor).should == obj2.send(:ancestor)
     end
 
     it "lets objects depend on module-namespaced components" do

@@ -28,8 +28,8 @@ module Conject
     end
 
     def get_constant(within, name)
-      if within.const_defined?(name)
-        within.const_get(name)
+      if within.const_defined?(name, false)
+        within.const_get(name, false)
       else
         raise "Could not find class or module named #{name} within #{within}"
       end

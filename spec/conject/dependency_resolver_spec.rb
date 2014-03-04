@@ -24,7 +24,7 @@ describe Conject::DependencyResolver do
 
   let :object_context do StubbedObjectContext.new(oc_objects) end
 
-  let :class_finder do mock("class finder") end
+  let :class_finder do double("class finder") end
 
   before do
     class_finder.stub(:get_module_path)

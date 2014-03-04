@@ -12,14 +12,14 @@ describe Conject::ObjectFactory do
 
   let :my_object_name do :my_object_name end
 
-  let :class_finder do mock(:class_finder) end
-  let :dependency_resolver do mock(:dependency_resolver) end
+  let :class_finder do double(:class_finder) end
+  let :dependency_resolver do double(:dependency_resolver) end
 
-  let :object_context do mock(:object_context) end
+  let :object_context do double(:object_context) end
 
   let :my_object_class do Class.new end
-  let :my_object do mock(:my_object) end
-  let :my_objects_components do mock(:my_objects_components) end
+  let :my_object do double(:my_object) end
+  let :my_objects_components do double(:my_objects_components) end
 
   describe "#construct_new" do
     describe "for Type 1 object construction" do

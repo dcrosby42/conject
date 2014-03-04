@@ -5,8 +5,8 @@ describe Conject::ObjectContext do
     Conject::ObjectContext.new(:parent_context => parent_context, :object_factory => object_factory)
   end
 
-  let :parent_context do mock(:parent_context) end
-  let :object_factory do mock(:object_factory) end
+  let :parent_context do double(:parent_context) end
+  let :object_factory do double(:object_factory) end
 
   describe "#get" do
     describe "when an object has been #put" do

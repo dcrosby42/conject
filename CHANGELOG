@@ -1,3 +1,7 @@
+Conject v0.1.8
+  * Fixed: bug in class finder when resolving module-namespaced objects
+  * Added: LICENSE
+
 Conject v0.1.7
   * Added :class and :specialize object configurations
   * Fixed a bug in the error handler that catches exceptions in object constructors
